@@ -1,3 +1,10 @@
+#ifndef NODE_H_
+#define NODE_H_
+
+#include <string>
+
+using namespace std;
+
 class Node
 {
     public:
@@ -10,3 +17,5 @@ class Node
         Node* next; //puntero hacia el nodo siguiente en la lista
         Node* prev; //puntero hacia el nodo anterior en la lista
 };
+
+#endif /* NODE_H_ */
