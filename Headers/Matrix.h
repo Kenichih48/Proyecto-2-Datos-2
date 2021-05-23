@@ -26,11 +26,11 @@ class MatrixNode{
     private:
         MatrixNode* tail = NULL; 
         MatrixNode* head = NULL;
-        int lenght = 0;
+        int length = 0;
     public: 
         Matrix(){}
-        int getLenght(){return this->lenght;}
-        bool isEmpty(){return this->lenght == 0;}
+        int getLength(){return this->length;}
+        bool isEmpty(){return this->length == 0;}
         void append(List newlist){
             if(this->isEmpty()){
                 List* newlistPtr = new List;
@@ -38,7 +38,7 @@ class MatrixNode{
                 head = new MatrixNode;
                 head->setElement(newlistPtr);
                 tail = head; 
-                this->lenght++;
+                this->length++;
             } else{ 
                 List* newlistPtr = new List;
                 *newlistPtr = newlist;
@@ -47,7 +47,7 @@ class MatrixNode{
                 tail->setNext(newNodePtr);
                 newNodePtr->setLast(tail);
                 tail = newNodePtr;
-                this->lenght++;
+                this->length++;
             }
         }
         void print(){
@@ -63,7 +63,7 @@ class MatrixNode{
         }
         List at(int index){
             int currentIndex = 0;
-            if(index > this->lenght || index < 0){
+            if(index > this->length || index < 0){
                 throw;
             } else{ 
                 MatrixNode* currentNode;

@@ -23,7 +23,7 @@ int main(){
     List l = newMatrix1.at(1);
     
     
-    for(int i = 0; i <= newMatrix1.getLenght()-1; i++){
+    for(int i = 0; i <= newMatrix1.getLength()-1; i++){
         List list = newMatrix1.at(i);
         std::cout << "Before" << std::endl;
         for(int j = 0; j <= 3; j++){
