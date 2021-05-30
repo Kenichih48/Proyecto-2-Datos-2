@@ -56,7 +56,7 @@ int main(){
                 float mouseX = event.mouseButton.x;
                 float mouseY = event.mouseButton.y;
                 sf::Vector2f mousePos(mouseX,mouseY);
-                //Check if its the run button
+                
                 if (buttonBP.getGlobalBounds().contains(mousePos)){
                     window.setActive(false);
                     window.setVisible(false);
@@ -64,7 +64,7 @@ int main(){
                     window.setVisible(true);
                     window.setActive(true);
                 }
-                //Check if its the stop button
+                
                 else if (buttonGP.getGlobalBounds().contains(mousePos)){
                     std::cout << "Genetic Puzzle!" << std::endl;
                 }

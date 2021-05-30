@@ -102,6 +102,36 @@ BPGui::BPGui(){
                     numberGoals.setString(numberGoalsString);
                 }
             }
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)){
+                
+                float mouseX = event.mouseButton.x;
+                float mouseY = event.mouseButton.y;
+                sf::Vector2f mousePos(mouseX,mouseY);
+
+                if (numberPlayersButton.getGlobalBounds().contains(mousePos)){
+                    if(!numberPlayersBool){
+                        numberPlayersBool = true; 
+                        numberPlayersButton.setFillColor(sf::Color(46, 204, 113));
+                        playersButtonText.setString("Done?");
+                    } else {
+                        numberPlayersBool = false; 
+                        numberPlayersButton.setFillColor(sf::Color(231, 76, 60));
+                        playersButtonText.setString("Edit");
+                    }
+                }
+
+                else if (numberGoalsButton.getGlobalBounds().contains(mousePos)){
+                    if(!numberGoalsBool){
+                        numberGoalsBool = true; 
+                        numberGoalsButton.setFillColor(sf::Color(46, 204, 113));
+                        goalsButtonText.setString("Done?");
+                    } else {
+                        numberGoalsBool = false; 
+                        numberGoalsButton.setFillColor(sf::Color(231, 76, 60));
+                        goalsButtonText.setString("Edit");
+                    }
+                }
+            }
         }
         window.clear();
 

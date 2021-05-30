@@ -14,7 +14,7 @@ class MatrixNodeBP{
             this->next = nullptr;
             this->last = nullptr;
         }
-        ListBP getElement(){return *(this->element);}
+        ListBP* getElement(){return this->element;}
         MatrixNodeBP* getNext(){return this->next;}
         MatrixNodeBP* getLast(){return this->last;}
         void setElement(ListBP* list){this->element = list;}
@@ -55,7 +55,7 @@ class MatrixNodeBP{
                 MatrixNodeBP* currentNode;
                 currentNode = head; 
                 while (currentNode != NULL){
-                    ListBP currentList = currentNode->getElement();
+                    ListBP currentList = *(currentNode->getElement());
                     currentList.printList();
                     currentNode = currentNode->getNext();
                 }
@@ -74,7 +74,7 @@ class MatrixNodeBP{
                     currentIndex++;
                 }
                 std::cout << "After While"  << currentNode << std::endl;
-                return &(currentNode->getElement());
+                return currentNode->getElement();
             }
         }
  };
