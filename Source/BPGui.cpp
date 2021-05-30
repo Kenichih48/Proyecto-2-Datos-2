@@ -38,6 +38,7 @@ BPGui::BPGui(){
     sf::Text numberPlayers, numberGoals;
     sf::Text playersPrompt, goalsPrompt;
     sf::Text playersButtonText, goalsButtonText;
+    sf::Text ready, tryAgain;
     numberPlayersString = "0";
     numberGoalsString = "0";
     numberPlayers.setFont(font);
@@ -46,39 +47,48 @@ BPGui::BPGui(){
     goalsPrompt.setFont(font);
     playersButtonText.setFont(font);
     goalsButtonText.setFont(font);
+    ready.setFont(font);
     goalsPrompt.setPosition(120,265);
     playersPrompt.setPosition(120,105);
     numberPlayers.setPosition(125,195);
     numberGoals.setPosition(125,345);
     playersButtonText.setPosition(360,188);
     goalsButtonText.setPosition(360,338);
+    ready.setPosition(340,425);
     numberPlayers.setString(numberPlayersString);
     numberGoals.setString(numberGoalsString);
-    playersPrompt.setString("Number of Players:");
-    goalsPrompt.setString("Number of Goals:");
+    playersPrompt.setString("Number of Players: (1-12)");
+    goalsPrompt.setString("Number of Goals:(1-10)");
     playersButtonText.setString("Edit");
     goalsButtonText.setString("Edit");
+    ready.setString("Ready!");
     numberPlayers.setFillColor(sf::Color::Black);
     numberGoals.setFillColor(sf::Color::Black);
     playersPrompt.setFillColor(sf::Color::White);
     goalsPrompt.setFillColor(sf::Color::White);
     playersButtonText.setFillColor(sf::Color::Black);
     goalsButtonText.setFillColor(sf::Color::Black);
+    ready.setFillColor(sf::Color::Black);
     numberPlayers.setCharacterSize(50);
     numberGoals.setCharacterSize(50);
     playersPrompt.setCharacterSize(50);
     goalsPrompt.setCharacterSize(50);
     playersButtonText.setCharacterSize(50);
     goalsButtonText.setCharacterSize(50);
+    ready.setCharacterSize(50);
 
     //Creando Botones para Menu
     sf::RectangleShape numberPlayersButton, numberGoalsButton;
+    sf::RectangleShape readyButton;
     numberPlayersButton.setFillColor(sf::Color(231, 76, 60));
     numberGoalsButton.setFillColor(sf::Color(231, 76, 60));
+    readyButton.setFillColor(sf::Color(46, 204, 113));
     numberPlayersButton.setPosition(300,195);
     numberGoalsButton.setPosition(300,345);
+    readyButton.setPosition(300,435);
     numberPlayersButton.setSize(sf::Vector2f(200.0f,50.0f));
     numberGoalsButton.setSize(sf::Vector2f(200.0f,50.0f));
+    readyButton.setSize(sf::Vector2f(200.0f,50.0f));
 
     //Creando Bools para menu 
     bool menuBool = true;
@@ -95,10 +105,18 @@ BPGui::BPGui(){
             }
             if(event.type == sf::Event::TextEntered){
                 if(numberPlayersBool){
-                    numberPlayersString += event.text.unicode;
+                    if(!(event.text.unicode == 8)){
+                        numberPlayersString += event.text.unicode;
+                    } else {
+                        numberPlayersString.pop_back();
+                    }
                     numberPlayers.setString(numberPlayersString);
                 } else if (numberGoalsBool){
-                    numberGoalsString += event.text.unicode;
+                    if(!(event.text.unicode == 8)){
+                        numberGoalsString += event.text.unicode;
+                    } else {
+                        numberGoalsString.pop_back();
+                    }
                     numberGoals.setString(numberGoalsString);
                 }
             }
@@ -151,6 +169,8 @@ BPGui::BPGui(){
             window.draw(numberPlayers);
             window.draw(goalsPrompt);
             window.draw(numberGoals);
+            window.draw(readyButton);
+            window.draw(ready);
         }
         
         window.display();
