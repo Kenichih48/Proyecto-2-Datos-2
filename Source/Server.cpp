@@ -2,7 +2,7 @@
 #include "List.h"
 #include "Matrix.h"
 
-int main(){
+void server(){
     List list1 = List();
     List list2 = List();
     List list3 = List();
