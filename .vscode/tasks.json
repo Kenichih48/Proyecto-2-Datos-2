@@ -1,0 +1,30 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "type": "shell",
+        "label": "g++ build active file",
+        "command": "/usr/bin/g++",
+        "args": [
+            "-g",
+            "Headers/*.h",
+            "-I",
+            "Headers",
+            "Source/*.cpp",
+            "-o",
+            "Main",
+            "-lsfml-graphics",
+            "-lsfml-window",
+            "-lsfml-system"
+        ],
+        "options": {
+          "cwd": "${workspaceFolder}"
+        },
+        "problemMatcher": ["$gcc"],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        }
+      }
+    ]
+  }
