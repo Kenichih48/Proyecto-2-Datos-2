@@ -9,10 +9,13 @@ using namespace std;
 class ListBP{
     public:
         int length = 0;
-
         int getLength(){return this->length;}
 
         NodeBP* head; //El primer nodo de la lista
+
+        ListBP(){
+            this->head = NULL;   
+        }
         /**
          * @brief Prepara el primer nodo de la lista
          * @param new_head Recibe un puntero de un nodo

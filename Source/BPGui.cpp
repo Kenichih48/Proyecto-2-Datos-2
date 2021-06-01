@@ -1,6 +1,7 @@
-#include "BP_GUI.h"
 #include <iostream>
 #include <string.h>
+#include "BP_GUI.h"
+#include "Shoe.h"
 
 BPGui::BPGui(){
     sf::RenderWindow window(sf::VideoMode(800, 600), "BP Game");
@@ -48,6 +49,7 @@ BPGui::BPGui(){
     playersButtonText.setFont(font);
     goalsButtonText.setFont(font);
     ready.setFont(font);
+    tryAgain.setFont(font);
     goalsPrompt.setPosition(120,265);
     playersPrompt.setPosition(120,105);
     numberPlayers.setPosition(125,195);
@@ -55,13 +57,15 @@ BPGui::BPGui(){
     playersButtonText.setPosition(360,188);
     goalsButtonText.setPosition(360,338);
     ready.setPosition(340,425);
+    tryAgain.setPosition(510,425);
     numberPlayers.setString(numberPlayersString);
     numberGoals.setString(numberGoalsString);
     playersPrompt.setString("Number of Players: (1-12)");
-    goalsPrompt.setString("Number of Goals:(1-10)");
+    goalsPrompt.setString("Number of Goals: (1-10)");
     playersButtonText.setString("Edit");
     goalsButtonText.setString("Edit");
     ready.setString("Ready!");
+    tryAgain.setString("Try Again");
     numberPlayers.setFillColor(sf::Color::Black);
     numberGoals.setFillColor(sf::Color::Black);
     playersPrompt.setFillColor(sf::Color::White);
@@ -69,6 +73,7 @@ BPGui::BPGui(){
     playersButtonText.setFillColor(sf::Color::Black);
     goalsButtonText.setFillColor(sf::Color::Black);
     ready.setFillColor(sf::Color::Black);
+    tryAgain.setFillColor(sf::Color::Black);
     numberPlayers.setCharacterSize(50);
     numberGoals.setCharacterSize(50);
     playersPrompt.setCharacterSize(50);
@@ -76,6 +81,7 @@ BPGui::BPGui(){
     playersButtonText.setCharacterSize(50);
     goalsButtonText.setCharacterSize(50);
     ready.setCharacterSize(50);
+    tryAgain.setCharacterSize(50);
 
     //Creando Botones para Menu
     sf::RectangleShape numberPlayersButton, numberGoalsButton;
@@ -94,6 +100,34 @@ BPGui::BPGui(){
     bool menuBool = true;
     bool numberPlayersBool = false; 
     bool numberGoalsBool = false;
+    bool tryAgainBool = false; 
+
+    //Creado Sprites Juego 
+    sf::Texture players; //Sprite jugadores 
+    if(!players.loadFromFile("/home/jose430/Documents/Proyecto-2-Datos-2/Img/FootballPlayers.png")){
+        std::cout << "Image not loaded" << std::endl;
+    }
+    sf::Sprite user; 
+    sf::Sprite machine; 
+
+    user.setTexture(players);
+    machine.setTexture(players);
+    user.setTextureRect(sf::IntRect(0,0,77,85));
+    machine.setTextureRect(sf::IntRect(0,85,77,170));
+    user.setPosition(0,0);
+    machine.setPosition(0,100);
+
+    sf::Texture ballTexture; //Sprite Bola 
+    if(!ballTexture.loadFromFile("/home/jose430/Documents/Proyecto-2-Datos-2/Img/Ball.png")){
+        std::cout << "Image not loaded" << std::endl;
+    }
+    sf::Sprite ball; 
+    ball.setTexture(ballTexture);
+    ball.setPosition(400-(ball.getTextureRect().width/2),300-(ball.getTextureRect().height/2));
+
+    //Creando Zapato para tirar 
+    Shoe shoe = Shoe();
+
 
     while (window.isOpen())
     {
@@ -103,19 +137,27 @@ BPGui::BPGui(){
             if (event.type == sf::Event::Closed){
                 window.close();
             }
+            if(event.type == sf::Event::MouseMoved){
+                sf::Vector2f mousePos(event.mouseMove.x, event.mouseMove.y);
+                shoe.rotateShoe(&ball, mousePos);
+            }
             if(event.type == sf::Event::TextEntered){
                 if(numberPlayersBool){
                     if(!(event.text.unicode == 8)){
                         numberPlayersString += event.text.unicode;
                     } else {
-                        numberPlayersString.pop_back();
+                        if(numberPlayersString.length() > 0){
+                            numberPlayersString.pop_back();
+                        }
                     }
                     numberPlayers.setString(numberPlayersString);
                 } else if (numberGoalsBool){
                     if(!(event.text.unicode == 8)){
                         numberGoalsString += event.text.unicode;
                     } else {
-                        numberGoalsString.pop_back();
+                        if(numberGoalsString.length() > 0){
+                            numberGoalsString.pop_back();
+                        }
                     }
                     numberGoals.setString(numberGoalsString);
                 }
@@ -149,6 +191,33 @@ BPGui::BPGui(){
                         goalsButtonText.setString("Edit");
                     }
                 }
+
+                else if(readyButton.getGlobalBounds().contains(mousePos)){
+                    int numberPlayersInt = 0;
+                    int numberGoalsInt = 0;
+                    std::string playerSTDString = numberPlayers.getString();
+                    std::string goalsSTDString = numberGoals.getString();
+                    try{
+                        numberPlayersInt = std::stoi(playerSTDString);
+                        numberGoalsInt = std::stoi(goalsSTDString);
+                    } catch(std::exception e){
+                        std::cout << "Could not load player and goal number" << std::endl;
+                    }
+                    if((numberPlayersInt > 0 && numberPlayersInt <= 12)
+                    &&(numberGoalsInt > 0 && numberGoalsInt <= 10)){
+                        menuBool = false; 
+
+                        //packetS << numberPlayersInt << numberGoalsInt 
+
+                        //variable IP address global 
+                        //Tcp socket 
+                        //socket.connect(IP, puerto)
+                        //socket.send(paquete)
+                        
+                    } else{ 
+                        tryAgainBool = true; 
+                    }
+                }
             }
         }
         window.clear();
@@ -171,8 +240,17 @@ BPGui::BPGui(){
             window.draw(numberGoals);
             window.draw(readyButton);
             window.draw(ready);
+            if(tryAgainBool){
+                window.draw(tryAgain);
+            }
+
+        } else { //Dibujando Juego
+            window.draw(user);
+            window.draw(machine);
+            window.draw(ball);
+            window.draw(*shoe.getFoot());
         }
-        
+
         window.display();
     }
 
