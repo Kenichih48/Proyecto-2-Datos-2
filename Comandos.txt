@@ -1,3 +1,6 @@
  /usr/bin/g++ -g Headers/*.h -I Headers /usr/include/tinyxml.h  servidor.cpp -o ServerGP -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -ltinyxml
 
+/usr/bin/g++ -g Headers/*.h -I Headers /usr/include/tinyxml.h  Server.cpp -o ServerGP -lsfml-network -lsfml-graphics -lsfml-window -lsfml-system -ltinyxml
+
+
  /home/jose430/Pictures/FootballPlayers.png

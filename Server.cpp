@@ -1,7 +1,24 @@
 #include <iostream>
 #include <SFML/Network.hpp>
-#include "List.h"
-#include "Matrix.h"
+#include "Matrix_BP.h"
+#include "List_BP.h"
+
+
+//MatrixBP generatePlayingfield(int players){}
+
+MatrixBP generateCleanMatrix(){
+    MatrixBP matrix = MatrixBP();
+
+    for(int i = 0; i <= 6; i++){
+        ListBP list = ListBP();
+        for(int j = 0; j <= 6; j++){
+            list.append("0");
+        }
+        matrix.append(list);
+    }
+
+    return matrix;
+}
 
 int main(){
 
@@ -14,8 +31,9 @@ int main(){
 
     int numberGoalsInt;
     int numberPlayersInt;
+    bool stuff = false;
 
-    while (true){
+    while (stuff){
         socket.receive(packetR);
         if(packetR.getData() != NULL){
             packetR >> numberPlayersInt >> numberGoalsInt;
@@ -23,6 +41,12 @@ int main(){
             break;
         }
     }
+    
+
+    MatrixBP matrix = MatrixBP();
+    matrix = generateCleanMatrix();
+    matrix.print();
+
      
     /*
     List list1 = List();
