@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string.h>
 #include <SFML/Network.hpp>
+#include <unistd.h>
 #include "BP_GUI.h"
 #include "Shoe.h"
 
@@ -120,24 +121,41 @@ BPGui::BPGui(){
     ball.setPosition(400-(ball.getTextureRect().width/2),300-(ball.getTextureRect().height/2));
 
     //Creando menu para fuerza
-     sf::RectangleShape forceMenu; 
-    menu.setPosition(200,250);
-    menu.setSize(sf::Vector2f(300.0f,200.0f));
-    menu.setFillColor(sf::Color(149, 165, 166 ));
+    sf::RectangleShape forceMenu; 
+    forceMenu.setPosition(200,250);
+    forceMenu.setSize(sf::Vector2f(300.0f,200.0f));
+    forceMenu.setFillColor(sf::Color(149, 165, 166 ));
     sf::RectangleShape forceNumber;
     sf::RectangleShape forceReady; 
+    sf::Text forceNumberText;
     sf::Text forcePrompt,forceReadyText;
-    forceReady.setPosition(350,400);
-    forceNumber.setPosition(300,400);
+    forceNumberText.setFont(font);
+    forcePrompt.setFont(font);
+    forceReadyText.setFont(font);
+    forceReady.setPosition(320,350);
+    forceNumber.setPosition(260,350);
     forcePrompt.setPosition(250,270);
-    numberPlayersRect.setSize(sf::Vector2f(50.0f,50.0f));
-    numberGoalsRect.setSize(sf::Vector2f(50.0f,50.0f));
+    forceReadyText.setPosition(330,345);
+    forceNumberText.setPosition(265,345);
+    forceNumber.setSize(sf::Vector2f(50.0f,50.0f));
+    forceReady.setSize(sf::Vector2f(150.0f,50.0f));
     forceNumber.setFillColor(sf::Color::White);
     forceReady.setFillColor(sf::Color(46, 204, 113));
-    forcePrompt.setFillColor(sf::Color::White);
-    forcePrompt.setString("Force [1-10]");
-    forcePrompt.setString("Ready?");
+    forcePrompt.setFillColor(sf::Color::Black);
+    forceReadyText.setFillColor(sf::Color::Black);
+    forceNumberText.setFillColor(sf::Color::Black);
+    forcePrompt.setString("Force: [1-3]");
+    forceReadyText.setString("Ready?");
+    forceNumberText.setString("0");
+    forcePrompt.setCharacterSize(50);
+    forceReadyText.setCharacterSize(50);
+    forceNumberText.setCharacterSize(50);
 
+    //Creando variables de forceMenu
+    int degreeWhenForce = 0;
+    string forceNumberString = "0";
+    bool applyingForce = false; 
+    sf::Vector2i ballPos(3,3);
     //Creando Zapato para tirar 
     Shoe shoe = Shoe();
 
@@ -235,80 +253,203 @@ BPGui::BPGui(){
                         }
                     }
                     numberGoals.setString(numberGoalsString);
+                } else if(applyingForce){
+                    if(!(event.text.unicode == 8)){
+                        forceNumberString += event.text.unicode;
+                    } else {
+                        if(forceNumberString.length() > 0){
+                            forceNumberString.pop_back();
+                        }
+                    }
+                    forceNumberText.setString(forceNumberString);
                 }
             }
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left)){
-                
+
                 float mouseX = event.mouseButton.x;
                 float mouseY = event.mouseButton.y;
                 sf::Vector2f mousePos(mouseX,mouseY);
 
-                if (numberPlayersButton.getGlobalBounds().contains(mousePos)){
-                    if(!numberPlayersBool){
-                        numberPlayersBool = true; 
-                        numberPlayersButton.setFillColor(sf::Color(46, 204, 113));
-                        playersButtonText.setString("Done?");
-                    } else {
-                        numberPlayersBool = false; 
-                        numberPlayersButton.setFillColor(sf::Color(231, 76, 60));
-                        playersButtonText.setString("Edit");
+                if(menuBool){
+                    if (numberPlayersButton.getGlobalBounds().contains(mousePos)){
+                        if(!numberPlayersBool){
+                            numberPlayersBool = true; 
+                            numberPlayersButton.setFillColor(sf::Color(46, 204, 113));
+                            playersButtonText.setString("Done?");
+                        } else {
+                            numberPlayersBool = false; 
+                            numberPlayersButton.setFillColor(sf::Color(231, 76, 60));
+                            playersButtonText.setString("Edit");
+                        }
                     }
-                }
 
-                else if (numberGoalsButton.getGlobalBounds().contains(mousePos)){
-                    if(!numberGoalsBool){
-                        numberGoalsBool = true; 
-                        numberGoalsButton.setFillColor(sf::Color(46, 204, 113));
-                        goalsButtonText.setString("Done?");
-                    } else {
-                        numberGoalsBool = false; 
-                        numberGoalsButton.setFillColor(sf::Color(231, 76, 60));
-                        goalsButtonText.setString("Edit");
+                    else if (numberGoalsButton.getGlobalBounds().contains(mousePos)){
+                        if(!numberGoalsBool){
+                            numberGoalsBool = true; 
+                            numberGoalsButton.setFillColor(sf::Color(46, 204, 113));
+                            goalsButtonText.setString("Done?");
+                        } else {
+                            numberGoalsBool = false; 
+                            numberGoalsButton.setFillColor(sf::Color(231, 76, 60));
+                            goalsButtonText.setString("Edit");
+                        }
                     }
-                }
 
-                else if(readyButton.getGlobalBounds().contains(mousePos)){
-                    int numberPlayersInt = 0;
-                    int numberGoalsInt = 0;
-                    std::string playerSTDString = numberPlayers.getString();
-                    std::string goalsSTDString = numberGoals.getString();
-                    try{
-                        numberPlayersInt = std::stoi(playerSTDString);
-                        numberGoalsInt = std::stoi(goalsSTDString);
-                    } catch(std::exception e){
-                        std::cout << "Could not load player and goal number" << std::endl;
-                    }
-                    if((numberPlayersInt > 0 && numberPlayersInt <= 12)
-                    &&(numberGoalsInt > 0 && numberGoalsInt <= 10)){
-                        menuBool = false; 
+                    else if(readyButton.getGlobalBounds().contains(mousePos)){
+                        int numberPlayersInt = 0;
+                        int numberGoalsInt = 0;
+                        std::string playerSTDString = numberPlayers.getString();
+                        std::string goalsSTDString = numberGoals.getString();
+                        try{
+                            numberPlayersInt = std::stoi(playerSTDString);
+                            numberGoalsInt = std::stoi(goalsSTDString);
+                        } catch(std::exception e){
+                            std::cout << "Could not load player and goal number" << std::endl;
+                        }
+                        if((numberPlayersInt > 0 && numberPlayersInt <= 12)
+                        &&(numberGoalsInt > 0 && numberGoalsInt <= 10)){
+                            menuBool = false; 
 
-                        sf::TcpListener listener;
-                        listener.listen(8080);
-                        listener.accept(socket);
+                            sf::TcpListener listener;
+                            listener.listen(8080);
+                            listener.accept(socket);
 
-                        packetS << numberPlayersInt << numberGoalsInt;
-                        socket.send(packetS);
+                            packetS << numberPlayersInt << numberGoalsInt;
+                            socket.send(packetS);
+                            
+
+                            std::cout << "Sent" << std::endl;
+
                         
+                            while(true){
+                                socket.receive(packetR);
+                                if(packetR.getData() != NULL){
+                                    packetR >> matrixString;
+                                    std::cout <<  matrixString << std::endl;
+                                    break;
+                                }
+                            }
 
-                        std::cout << "Sent" << std::endl;
+                            matrix = generateMatrixFrom(matrixString);
+                            matrix.print();
 
-                       
-                        while(true){
-                            socket.receive(packetR);
-                            if(packetR.getData() != NULL){
-                                packetR >> matrixString;
-                                std::cout <<  matrixString << std::endl;
-                                break;
+                        } else{ 
+                            tryAgainBool = true; 
+                        }
+                    }
+                } else {
+                    if(!applyingForce){
+                        applyingForce = true;
+                        degreeWhenForce = shoe.getAngleDegree();
+                    } else {
+                        if(forceReady.getGlobalBounds().contains(mousePos)){
+                            int force = 0;
+                            try{
+                                force = std::stoi(forceNumberString);
+                            } catch(std::exception e){
+                                std::cout << "Could not load player and goal number" << std::endl;
+                            }
+                            if(force >=  0 && force <= 3){
+                                applyingForce = false;
+                                while(force > 0){
+                                    if(
+                                        (degreeWhenForce >= 0 && degreeWhenForce <= 30) ||
+                                        (degreeWhenForce >= 330 && degreeWhenForce <=  360)
+                                    ){
+                                        //Hacia izquierda
+                                        if(
+                                            ballPos.x-1 >= 0 &&
+                                            matrix.at(ballPos.y)->at(ballPos.x-1)->name != "1"
+                                        ){
+                                            ballPos.x--;
+                                        }
+                                    } else if(
+                                        (degreeWhenForce >= 150 && degreeWhenForce <= 180) ||
+                                        (degreeWhenForce >= 180 && degreeWhenForce <=  210)
+                                    ){
+                                        //Hacia derecha
+                                        if(
+                                            ballPos.x+1 < matrix.at(ballPos.y)->getLength() &&
+                                            matrix.at(ballPos.y)->at(ballPos.x+1)->name != "1"
+                                        ){
+                                            ballPos.x++;
+                                        }
+                                    } else if(
+                                        (degreeWhenForce >= 60 && degreeWhenForce <= 90) ||
+                                        (degreeWhenForce >= 90 && degreeWhenForce <=  120)
+                                    ){
+                                        //Hacia  abajo
+                                        if(
+                                            ballPos.y+1 < matrix.getLength() &&
+                                            matrix.at(ballPos.y+1)->at(ballPos.x)->name != "1"
+                                        ){
+                                            ballPos.y++;
+                                        }
+                                    } else if(
+                                        (degreeWhenForce >= 240 && degreeWhenForce <= 270) ||
+                                        (degreeWhenForce >= 270 && degreeWhenForce <=  300)
+                                    ){
+                                         //Hacia  arriba
+                                        if(
+                                            ballPos.y-1 >= 0 &&
+                                            matrix.at(ballPos.y-1)->at(ballPos.x)->name != "1"
+                                        ){
+                                            ballPos.y--;
+                                        }
+                                    } else if(degreeWhenForce > 30 && degreeWhenForce < 60){
+                                        //SurOeste
+                                        if(
+                                            ballPos.x-1 >= 0 &&
+                                            ballPos.y+1 < matrix.getLength() && 
+                                            matrix.at(ballPos.y+1)->at(ballPos.x-1)->name != "1"
+                                        ){
+                                            ballPos.y++;
+                                            ballPos.x--;
+                                        }
+                                    } else if(degreeWhenForce > 120 && degreeWhenForce < 150){
+                                        //SurEste
+                                        if(
+                                            ballPos.x+1 < matrix.at(ballPos.y)->getLength() &&
+                                            ballPos.y+1 < matrix.getLength() && 
+                                            matrix.at(ballPos.y+1)->at(ballPos.x+1)->name != "1"
+                                        ){
+                                            ballPos.y++;
+                                            ballPos.x++;
+                                        }
+                                    } else if(degreeWhenForce > 210 && degreeWhenForce < 240){
+                                        //Noreste
+                                        if(
+                                            ballPos.y-1 >= 0 &&
+                                            ballPos.x+1 < matrix.at(ballPos.y)->getLength() && 
+                                            matrix.at(ballPos.y-1)->at(ballPos.x+1)->name != "1"
+                                        ){
+                                            ballPos.y--;
+                                            ballPos.x++;
+                                        }
+                                    } else if(degreeWhenForce > 300 && degreeWhenForce < 330){
+                                        //SurOeste
+                                        if(
+                                            ballPos.y-1 >= 0 &&
+                                            ballPos.x-1 >= 0 && 
+                                            matrix.at(ballPos.y-1)->at(ballPos.x-1)->name != "1"
+                                        ){
+                                            ballPos.y--;
+                                            ballPos.x--;
+                                        }
+                                    }
+                                    ball.setPosition(
+                                        ((window.getSize().x/matrix.at(ballPos.y)->getLength())*ballPos.x) + 37,
+                                        (((window.getSize().y-50)/matrix.getLength())*ballPos.y) + 26
+                                    );
+                                    sleep(5);
+                                    force--;
+                                } 
                             }
                         }
-
-                        matrix = generateMatrixFrom(matrixString);
-                        matrix.print();
-
-                    } else{ 
-                        tryAgainBool = true; 
                     }
                 }
+                
+                
             }
         }
         window.clear();
@@ -339,6 +480,14 @@ BPGui::BPGui(){
             drawFromMatrix(&window,&matrix);
             window.draw(ball);
             window.draw(*shoe.getFoot());
+            if(applyingForce){
+                window.draw(forceMenu);
+                window.draw(forceNumber);
+                window.draw(forcePrompt);
+                window.draw(forceReady);
+                window.draw(forceReadyText);
+                window.draw(forceNumberText);
+            }
         }
 
         window.display();

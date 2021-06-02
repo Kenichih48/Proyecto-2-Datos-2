@@ -8,7 +8,7 @@ class Shoe{
         sf::Texture shoeTexture;
         sf::Sprite foot; 
         bool flipped = false; 
-
+        int angleDegree;
     public:
         Shoe();
         void rotateShoe(sf::Sprite* ball,sf::Vector2f mousePosition);
@@ -17,6 +17,7 @@ class Shoe{
         bool getFlipped(){return flipped;};
         void flip();
         sf::Sprite* getFoot(){return &foot;};
+        int getAngleDegree(){return this->angleDegree;}
 };
 
 #endif /*SHOE_H_*/

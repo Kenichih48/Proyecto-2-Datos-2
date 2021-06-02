@@ -17,7 +17,7 @@ void Shoe::rotateShoe(sf::Sprite* ball,sf::Vector2f mousePosition){
     float legX = abs(ball->getPosition().x+(ball->getTextureRect().width/2)-mousePosition.x);
     float legY = abs(ball->getPosition().y+(ball->getTextureRect().height/2)-mousePosition.y);
     float hypotenuse = sqrt(pow(legX,2) + pow(legY,2));
-    float angleDegree = 0;
+    angleDegree = 0;
     int differenceX;
     int differenceY;
     float radius = ball->getTextureRect().width/2;
@@ -62,7 +62,6 @@ void Shoe::rotateShoe(sf::Sprite* ball,sf::Vector2f mousePosition){
         }
     }
     
-
     foot.setRotation(360 - angleDegree);
 
     int newX = (ball->getPosition().x+(ball->getTextureRect().width/2)) + differenceX;
