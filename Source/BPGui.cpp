@@ -119,6 +119,25 @@ BPGui::BPGui(){
     ball.setTexture(ballTexture);
     ball.setPosition(400-(ball.getTextureRect().width/2),300-(ball.getTextureRect().height/2));
 
+    //Creando menu para fuerza
+     sf::RectangleShape forceMenu; 
+    menu.setPosition(200,250);
+    menu.setSize(sf::Vector2f(300.0f,200.0f));
+    menu.setFillColor(sf::Color(149, 165, 166 ));
+    sf::RectangleShape forceNumber;
+    sf::RectangleShape forceReady; 
+    sf::Text forcePrompt,forceReadyText;
+    forceReady.setPosition(350,400);
+    forceNumber.setPosition(300,400);
+    forcePrompt.setPosition(250,270);
+    numberPlayersRect.setSize(sf::Vector2f(50.0f,50.0f));
+    numberGoalsRect.setSize(sf::Vector2f(50.0f,50.0f));
+    forceNumber.setFillColor(sf::Color::White);
+    forceReady.setFillColor(sf::Color(46, 204, 113));
+    forcePrompt.setFillColor(sf::Color::White);
+    forcePrompt.setString("Force [1-10]");
+    forcePrompt.setString("Ready?");
+
     //Creando Zapato para tirar 
     Shoe shoe = Shoe();
 
@@ -170,8 +189,8 @@ BPGui::BPGui(){
     matrix2->at(3)->at(1)->name = "1";
     matrix2->at(1)->at(2)->name = "1";
     matrix2->at(6)->at(2)->name = "1";
-    matrix2->at(0)->at(3)->name = "1";
-    matrix2->at(3)->at(3)->name = "1";
+    matrix2->at(0)->at(2)->name = "1";
+    matrix2->at(3)->at(2)->name = "1";
     matrix2->at(2)->at(4)->name = "1";
     matrix2->at(5)->at(4)->name = "1";
     matrix2->at(1)->at(5)->name = "1";
@@ -311,10 +330,16 @@ void BPGui::drawFromMatrix(sf::RenderWindow* window, MatrixBP* matrix){
         for(int j = 0; j < newList->getLength(); j++){
             NodeBPG* newNode = newList->at(j);
             if(newNode->name == "1"){
-                sf::Sprite newPlayer = user;
+                sf::Sprite newPlayer;
+                if(j < ((int)newList->getLength()/2)){
+                    newPlayer = user;    
+                } else{ 
+                    newPlayer = machine;
+                }
+                
                 newPlayer.setPosition(
                     ((int)(window->getSize().x/newList->getLength()) *j)+15,
-                    ((int)((window->getSize().y-15)/matrix->getLength()) *i)-15
+                    ((int)((window->getSize().y-50)/matrix->getLength()) *i)-10
                 );
                 window->draw(newPlayer);
             }
