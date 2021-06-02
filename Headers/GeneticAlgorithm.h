@@ -318,12 +318,12 @@ public:
                             playing = true;
                         else if (playButton.getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y)) && playing)
                             playing = false;
-                        else if (rewindButton.getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y)) && generation >= 1) {
+                        else if (rewindButton.getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y)) && generation > 0) {
                             generation--;
                             loadPuzzle(listGenerations->getDataPos(generation));
                             playing = false;
                         }
-                        else if (skipButton.getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y)) && generation <= 9){
+                        else if (skipButton.getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y)) && generation < generation_){
                             generation++;
                             loadPuzzle(listGenerations->getDataPos(generation));
                             playing = false;
