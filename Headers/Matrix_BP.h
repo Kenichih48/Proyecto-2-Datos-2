@@ -2,6 +2,7 @@
 #define MATRIXBP_H_
 
 #include "List_BP.h"
+#include <sstream>
 
 class MatrixNodeBPG{
     private: 
@@ -50,16 +51,19 @@ class MatrixNodeBPG{
                 this->length++;
             }
         }
-        void print(){
+        string print(){
+            stringstream ss;
             if(!this->isEmpty()){
                 MatrixNodeBPG* currentNode;
                 currentNode = head; 
                 while (currentNode != NULL){
                     ListBP* currentList = currentNode->getElement();
-                    currentList->printList();
+                    string listString = currentList->printList();
+                    ss << listString;
                     currentNode = currentNode->getNext();
                 }
             }
+            return ss.str();
         }
         ListBP* at(int index){
             int currentIndex = 0;

@@ -15,14 +15,13 @@ int main(){
     sf::IpAddress ip = sf::IpAddress::getLocalAddress();
     sf::TcpSocket socket;
     sf::TcpListener listener;
-    /*
     listener.listen(8080);
-    listener.accept(socket);*/
+    listener.accept(socket);
     sf::Packet packetS, packetR;
 
     int numberGoalsInt;
     int numberPlayersInt;
-    bool stuff = false;
+    bool stuff = true;
     srand(time(NULL));
 
     while (stuff){
@@ -34,8 +33,6 @@ int main(){
         }
     }
     
-    
-
     MatrixBP matrix = MatrixBP();
     matrix = generateCleanMatrix();
     matrix.print();
@@ -43,8 +40,13 @@ int main(){
     std::cout << std::endl;
 
     MatrixBP maze = MatrixBP();
-    maze = generatePlayingfield(7);
-    maze.print();
+    maze = generatePlayingfield(numberPlayersInt);
+    string mazeString = maze.print();
+    std::cout << mazeString;
+
+    packetS << mazeString;
+    socket.send(packetS);
+
     /*
     List list1 = List();
     List list2 = List();

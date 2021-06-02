@@ -14,6 +14,7 @@ class BPGui{
         BPGui();
         void drawFromMatrix(sf::RenderWindow* window, MatrixBP* matrix);
         void setUpSprites();
+        MatrixBP generateMatrixFrom(string matrixString);
         
 };
 

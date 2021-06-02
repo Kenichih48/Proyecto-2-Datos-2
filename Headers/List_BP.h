@@ -3,6 +3,7 @@
 
 #include "Node_BP.h"
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -43,6 +44,7 @@ class ListBP{
             {
                 new_node->prev = NULL;
                 head = new_node;
+                length++;
                 return;
             }
             while (last->next != NULL) //while para llegar al final de la lista
@@ -100,15 +102,18 @@ class ListBP{
         /**
          * @brief imprime todos los elementos de la lista
         **/
-        void printList() //Función que imprime todos los nombres de los elementos en la lista
+        string printList() //Función que imprime todos los nombres de los elementos en la lista
         {
             NodeBPG* node = head;
+            stringstream ss;
             cout<<"\nEstado de la lista: \n";
             while (node != NULL)
             {
                 cout<<" "<<node->name<<" ";
+                ss << node->name;
                 node = node->next;
             }
+            return ss.str();
         }
 
         /**

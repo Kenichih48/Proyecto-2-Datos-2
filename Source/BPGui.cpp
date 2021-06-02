@@ -141,6 +141,7 @@ BPGui::BPGui(){
     //Creando Zapato para tirar 
     Shoe shoe = Shoe();
 
+    /*
     //Creando Matriz de ejemplo
     ListBP list4;
     ListBP list5;
@@ -198,7 +199,10 @@ BPGui::BPGui(){
     matrix2->at(5)->at(6)->name = "1";
     matrix2->at(3)->at(6)->name = "3"; 
     
-    matrix2->print();
+    matrix2->print();*/
+
+    MatrixBP matrix;
+    string matrixString;
 
     while (window.isOpen())
     {
@@ -278,8 +282,28 @@ BPGui::BPGui(){
                     &&(numberGoalsInt > 0 && numberGoalsInt <= 10)){
                         menuBool = false; 
 
+                        sf::TcpListener listener;
+                        listener.listen(8080);
+                        listener.accept(socket);
+
                         packetS << numberPlayersInt << numberGoalsInt;
                         socket.send(packetS);
+                        
+
+                        std::cout << "Sent" << std::endl;
+
+                       
+                        while(true){
+                            socket.receive(packetR);
+                            if(packetR.getData() != NULL){
+                                packetR >> matrixString;
+                                std::cout <<  matrixString << std::endl;
+                                break;
+                            }
+                        }
+
+                        matrix = generateMatrixFrom(matrixString);
+                        matrix.print();
 
                     } else{ 
                         tryAgainBool = true; 
@@ -312,7 +336,7 @@ BPGui::BPGui(){
             }
 
         } else { //Dibujando Juego
-            drawFromMatrix(&window,matrix2);
+            drawFromMatrix(&window,&matrix);
             window.draw(ball);
             window.draw(*shoe.getFoot());
         }
@@ -355,4 +379,22 @@ void BPGui::setUpSprites(){
     machine.setTexture(players);
     user.setTextureRect(sf::IntRect(0,0,77,85));
     machine.setTextureRect(sf::IntRect(0,85,77,170));
+}
+
+MatrixBP BPGui::generateMatrixFrom(string matrixString){
+    MatrixBP matrix = MatrixBP();
+
+    for(int i = 0; i <= 6; i++){
+        ListBP list = ListBP();
+        for(int j = 0; j <= 7; j++){
+            string s;
+            char c; 
+            c = matrixString[j+(8*i)];
+            s += c;
+            list.append(s);
+        }
+        matrix.append(list);
+    }
+
+    return matrix;
 }
