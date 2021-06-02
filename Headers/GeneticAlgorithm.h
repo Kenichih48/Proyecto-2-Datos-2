@@ -1,4 +1,4 @@
-//#pragma once
+#pragma once
 #ifndef GENETICPUZZLE_GENETICALGORITHM_H
 #define GENETICPUZZLE_GENETICALGORITHM_H
 #include "UtilityProgram.h"
@@ -277,13 +277,11 @@ public:
 
             if(same == numPieces)
             {
-                cout << "La imagen ha sido ordenada exitosamente! En: " << generation_ << " generaciones" << endl;
                 doingGens = true;
             }
 
             if(listGenerations->getSize() == limitGenerations )
             {
-                cout << "El limite de generaciones ha sido alcanzado!" << endl;
                 doingGens = true;
             }
         }
@@ -320,12 +318,12 @@ public:
                             playing = true;
                         else if (playButton.getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y)) && playing)
                             playing = false;
-                        else if (rewindButton.getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y))) {
+                        else if (rewindButton.getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y)) && generation > 0) {
                             generation--;
                             loadPuzzle(listGenerations->getDataPos(generation));
                             playing = false;
                         }
-                        else if (skipButton.getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y))){
+                        else if (skipButton.getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y)) && generation < generation_){
                             generation++;
                             loadPuzzle(listGenerations->getDataPos(generation));
                             playing = false;
