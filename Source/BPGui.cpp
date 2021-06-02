@@ -1,9 +1,16 @@
 #include <iostream>
 #include <string.h>
+#include <SFML/Network.hpp>
 #include "BP_GUI.h"
 #include "Shoe.h"
 
 BPGui::BPGui(){
+
+    sf::IpAddress ip = sf::IpAddress::getLocalAddress();
+    sf::TcpSocket socket;
+    sf::Packet packetS, packetR;
+    socket.connect(ip, 8080);
+
     sf::RenderWindow window(sf::VideoMode(800, 600), "BP Game");
     
     //Cargando Fondo
@@ -103,20 +110,7 @@ BPGui::BPGui(){
     bool tryAgainBool = false; 
 
     //Creado Sprites Juego 
-    sf::Texture players; //Sprite jugadores 
-    if(!players.loadFromFile("/home/jose430/Documents/Proyecto-2-Datos-2/Img/FootballPlayers.png")){
-        std::cout << "Image not loaded" << std::endl;
-    }
-    sf::Sprite user; 
-    sf::Sprite machine; 
-
-    user.setTexture(players);
-    machine.setTexture(players);
-    user.setTextureRect(sf::IntRect(0,0,77,85));
-    machine.setTextureRect(sf::IntRect(0,85,77,170));
-    user.setPosition(0,0);
-    machine.setPosition(0,100);
-
+    setUpSprites();
     sf::Texture ballTexture; //Sprite Bola 
     if(!ballTexture.loadFromFile("/home/jose430/Documents/Proyecto-2-Datos-2/Img/Ball.png")){
         std::cout << "Image not loaded" << std::endl;
@@ -128,6 +122,64 @@ BPGui::BPGui(){
     //Creando Zapato para tirar 
     Shoe shoe = Shoe();
 
+    //Creando Matriz de ejemplo
+    ListBP list4;
+    ListBP list5;
+    ListBP list6;
+    ListBP list7;
+    ListBP list8;
+    ListBP list9;
+    ListBP list10;
+
+    for(int i = 0; i < 7; i++){
+        NodeBPG* newNode1 = new NodeBPG();
+        NodeBPG* newNode2 = new NodeBPG();
+        NodeBPG* newNode3 = new NodeBPG();
+        NodeBPG* newNode4 = new NodeBPG();
+        NodeBPG* newNode5 = new NodeBPG();
+        NodeBPG* newNode6 = new NodeBPG();
+        NodeBPG* newNode7 = new NodeBPG();
+
+        newNode1->name = "0";
+        newNode2->name = "0";
+        newNode3->name = "0";
+        newNode4->name = "0";
+        newNode5->name = "0";
+        newNode6->name = "0";
+        newNode7->name = "0";
+
+        list4.append(newNode1);
+        list5.append(newNode2);
+        list6.append(newNode3);
+        list7.append(newNode4);
+        list8.append(newNode5);
+        list9.append(newNode6);
+        list10.append(newNode7);
+    }
+
+    MatrixBP* matrix2 = new MatrixBP();
+    matrix2->append(list4);
+    matrix2->append(list5);
+    matrix2->append(list6);
+    matrix2->append(list7);
+    matrix2->append(list8);
+    matrix2->append(list9);
+    matrix2->append(list10);
+    
+    matrix2->at(4)->at(1)->name = "2";
+    matrix2->at(3)->at(1)->name = "1";
+    matrix2->at(1)->at(2)->name = "1";
+    matrix2->at(6)->at(2)->name = "1";
+    matrix2->at(0)->at(3)->name = "1";
+    matrix2->at(3)->at(3)->name = "1";
+    matrix2->at(2)->at(4)->name = "1";
+    matrix2->at(5)->at(4)->name = "1";
+    matrix2->at(1)->at(5)->name = "1";
+    matrix2->at(3)->at(5)->name = "1";
+    matrix2->at(5)->at(6)->name = "1";
+    matrix2->at(3)->at(6)->name = "3"; 
+    
+    matrix2->print();
 
     while (window.isOpen())
     {
@@ -207,13 +259,9 @@ BPGui::BPGui(){
                     &&(numberGoalsInt > 0 && numberGoalsInt <= 10)){
                         menuBool = false; 
 
-                        //packetS << numberPlayersInt << numberGoalsInt 
+                        packetS << numberPlayersInt << numberGoalsInt;
+                        socket.send(packetS);
 
-                        //variable IP address global 
-                        //Tcp socket 
-                        //socket.connect(IP, puerto)
-                        //socket.send(paquete)
-                        
                     } else{ 
                         tryAgainBool = true; 
                     }
@@ -245,8 +293,7 @@ BPGui::BPGui(){
             }
 
         } else { //Dibujando Juego
-            window.draw(user);
-            window.draw(machine);
+            drawFromMatrix(&window,matrix2);
             window.draw(ball);
             window.draw(*shoe.getFoot());
         }
@@ -254,4 +301,33 @@ BPGui::BPGui(){
         window.display();
     }
 
+}
+
+void BPGui::drawFromMatrix(sf::RenderWindow* window, MatrixBP* matrix){
+    int x = 0; 
+    int y = 0;
+    for(int i = 0; i < matrix->getLength();i++){
+        ListBP* newList = matrix->at(i);
+        for(int j = 0; j < newList->getLength(); j++){
+            NodeBPG* newNode = newList->at(j);
+            if(newNode->name == "1"){
+                sf::Sprite newPlayer = user;
+                newPlayer.setPosition(
+                    ((int)(window->getSize().x/newList->getLength()) *j)+15,
+                    ((int)((window->getSize().y-15)/matrix->getLength()) *i)-15
+                );
+                window->draw(newPlayer);
+            }
+        }
+    }
+}
+
+void BPGui::setUpSprites(){
+    if(!players.loadFromFile("/home/jose430/Documents/Proyecto-2-Datos-2/Img/FootballPlayers.png")){
+        std::cout << "Image not loaded" << std::endl;
+    }
+    user.setTexture(players);
+    machine.setTexture(players);
+    user.setTextureRect(sf::IntRect(0,0,77,85));
+    machine.setTextureRect(sf::IntRect(0,85,77,170));
 }

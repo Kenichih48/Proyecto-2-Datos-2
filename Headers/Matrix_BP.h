@@ -3,29 +3,29 @@
 
 #include "List_BP.h"
 
-class MatrixNodeBP{
+class MatrixNodeBPG{
     private: 
         ListBP* element; 
-        MatrixNodeBP* next; 
-        MatrixNodeBP* last;
+        MatrixNodeBPG* next; 
+        MatrixNodeBPG* last;
     public: 
-        MatrixNodeBP(){
+        MatrixNodeBPG(){
             this->element = nullptr;
             this->next = nullptr;
             this->last = nullptr;
         }
         ListBP* getElement(){return this->element;}
-        MatrixNodeBP* getNext(){return this->next;}
-        MatrixNodeBP* getLast(){return this->last;}
+        MatrixNodeBPG* getNext(){return this->next;}
+        MatrixNodeBPG* getLast(){return this->last;}
         void setElement(ListBP* list){this->element = list;}
-        void setNext(MatrixNodeBP* next){this->next = next;}
-        void setLast(MatrixNodeBP* last){this->last = last;}
+        void setNext(MatrixNodeBPG* next){this->next = next;}
+        void setLast(MatrixNodeBPG* last){this->last = last;}
  };
 
  class MatrixBP{
     private:
-        MatrixNodeBP* tail = NULL; 
-        MatrixNodeBP* head = NULL;
+        MatrixNodeBPG* tail = NULL; 
+        MatrixNodeBPG* head = NULL;
         int length = 0;
     public: 
         MatrixBP(){}
@@ -35,14 +35,14 @@ class MatrixNodeBP{
             if(this->isEmpty()){
                 ListBP* newlistPtr = new ListBP;
                 *newlistPtr = newlist; 
-                head = new MatrixNodeBP;
+                head = new MatrixNodeBPG;
                 head->setElement(newlistPtr);
                 tail = head; 
                 this->length++;
             } else{ 
                 ListBP* newlistPtr = new ListBP;
                 *newlistPtr = newlist;
-                MatrixNodeBP* newNodePtr = new MatrixNodeBP;
+                MatrixNodeBPG* newNodePtr = new MatrixNodeBPG;
                 newNodePtr->setElement(newlistPtr);
                 tail->setNext(newNodePtr);
                 newNodePtr->setLast(tail);
@@ -52,11 +52,11 @@ class MatrixNodeBP{
         }
         void print(){
             if(!this->isEmpty()){
-                MatrixNodeBP* currentNode;
+                MatrixNodeBPG* currentNode;
                 currentNode = head; 
                 while (currentNode != NULL){
-                    ListBP currentList = *(currentNode->getElement());
-                    currentList.printList();
+                    ListBP* currentList = currentNode->getElement();
+                    currentList->printList();
                     currentNode = currentNode->getNext();
                 }
             }
@@ -66,14 +66,14 @@ class MatrixNodeBP{
             if(index > this->length || index < 0){
                 throw;
             } else{ 
-                MatrixNodeBP* currentNode;
+                MatrixNodeBPG* currentNode;
                 currentNode = head; 
-                std::cout << "Before while" << std::endl;
+                //std::cout << "Before while" << std::endl;
                 while(currentIndex < index){
                     currentNode = currentNode->getNext();
                     currentIndex++;
                 }
-                std::cout << "After While"  << currentNode << std::endl;
+                //std::cout << "After While"  << currentNode << std::endl;
                 return currentNode->getElement();
             }
         }

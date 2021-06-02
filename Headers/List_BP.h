@@ -9,18 +9,15 @@ using namespace std;
 class ListBP{
     public:
         int length = 0;
+
         int getLength(){return this->length;}
 
-        NodeBP* head; //El primer nodo de la lista
-
-        ListBP(){
-            this->head = NULL;   
-        }
+        NodeBPG* head = NULL; //El primer nodo de la lista
         /**
          * @brief Prepara el primer nodo de la lista
          * @param new_head Recibe un puntero de un nodo
         **/
-        void set_head(NodeBP* new_head){ //asigna un nodo recibido como el primer nodo de la lista
+        void set_head(NodeBPG* new_head){ //asigna un nodo recibido como el primer nodo de la lista
             head = new_head;
         }
 
@@ -35,8 +32,8 @@ class ListBP{
         **/
         void append(string new_name) //dado los datos, añade un nodo con los datos recibidos al final de la lista
         {
-            NodeBP* new_node = new NodeBP();  //se crea un nodo nuevo     
-            NodeBP* last = head;
+            NodeBPG* new_node = new NodeBPG();  //se crea un nodo nuevo     
+            NodeBPG* last = head;
 
             // se asignan los valores al nuevo nodo
             new_node->name = new_name;
@@ -56,18 +53,20 @@ class ListBP{
             return;
         }
 
-        void append(NodeBP* newNode){     
-            NodeBP* last = head;
+        void append(NodeBPG* newNode){     
+            NodeBPG* last = head;
             newNode->next = NULL;
 
             if (head == NULL) //caso añadir nodo a una lista vacía
             {
                 newNode->prev = NULL;
                 head = newNode;
+                length++;
                 return;
             }
-            while (last->next != NULL) //while para llegar al final de la lista
-                {last = last->next;}
+            while (last->next != NULL){
+                last = last->next;
+            }
             last->next = newNode; //se asigna el último nodo como el nodo nuevo
             newNode->prev = last;  
             this->length++;      
@@ -78,7 +77,7 @@ class ListBP{
          * @param del nodo que será borrado de lista
          * @return el nodo que fue borrado
         **/
-        NodeBP* deleteNode(NodeBP* del) //función para borrar un nodo dado de la lista, este nodo es luego retornado para luego ser agregado a collector
+        NodeBPG* deleteNode(NodeBPG* del) //función para borrar un nodo dado de la lista, este nodo es luego retornado para luego ser agregado a collector
         {
             if (head == NULL || del == NULL) //caso particular
                 {//return;
@@ -103,7 +102,7 @@ class ListBP{
         **/
         void printList() //Función que imprime todos los nombres de los elementos en la lista
         {
-            NodeBP* node = head;
+            NodeBPG* node = head;
             cout<<"\nEstado de la lista: \n";
             while (node != NULL)
             {
@@ -118,7 +117,7 @@ class ListBP{
          * @return un bool indicando si existe un nodo con el nombre especificado o no
         **/
         int check_list(string input_name){ //Función que revisa si el elemento dado existe en la lista
-            NodeBP* node = head;
+            NodeBPG* node = head;
             int position = 0;
             while (node != NULL)
             {
@@ -133,9 +132,9 @@ class ListBP{
             return -1;
         }
 
-        NodeBP* at(int position){
-            NodeBP* result = new NodeBP();
-            NodeBP* current = this->head;
+        NodeBPG* at(int position){
+            NodeBPG* result = new NodeBPG();
+            NodeBPG* current = this->head;
             result->name ="Empty";
             int i = 0;
             if(position < this->length){

@@ -1,8 +1,30 @@
 #include <iostream>
+#include <SFML/Network.hpp>
 #include "List.h"
 #include "Matrix.h"
 
-void server(){
+int main(){
+
+    sf::IpAddress ip = sf::IpAddress::getLocalAddress();
+    sf::TcpSocket socket;
+    sf::TcpListener listener;
+    listener.listen(8080);
+    listener.accept(socket);
+    sf::Packet packetS, packetR;
+
+    int numberGoalsInt;
+    int numberPlayersInt;
+
+    while (true){
+        socket.receive(packetR);
+        if(packetR.getData() != NULL){
+            packetR >> numberPlayersInt >> numberGoalsInt;
+            std::cout <<  numberPlayersInt << numberGoalsInt << std::endl;
+            break;
+        }
+    }
+     
+    /*
     List list1 = List();
     List list2 = List();
     List list3 = List();
@@ -37,5 +59,5 @@ void server(){
 
     newMatrix2.print();
 
-    std::cout << "finished print" << std::endl;
+    std::cout << "finished print" << std::endl;*/
 }

@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "BP_GUI.h"
-
+#include "geneticPuzzle.h"
 
 
 int main(){
@@ -67,6 +67,11 @@ int main(){
                 
                 else if (buttonGP.getGlobalBounds().contains(mousePos)){
                     std::cout << "Genetic Puzzle!" << std::endl;
+                    window.setActive(false);
+                    window.setVisible(false);
+                    geneticPuzzle();
+                    window.setVisible(true);
+                    window.setActive(true);
                 }
             }
         }

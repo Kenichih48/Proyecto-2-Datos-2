@@ -1,13 +1,18 @@
+#ifndef GENETICPUZZLE_H_
+#define GENETICPUZZLE_H_ 
+
+
 #include <SFML/Network.hpp>
 #include <iostream>
-#include "../Headers/GeneticAlgorithm.h"
+#include "ListGP.h"
+#include "MatrixGP.h"
 
 
 using namespace sf;
 using namespace std;
 
 ///Main program
-int main(int argc, char const *argv[])
+int geneticPuzzle() //int argc, char const *argv[]
 {
     Packet packetS, packetR;
     int numPieces;
@@ -44,3 +49,5 @@ int main(int argc, char const *argv[])
 
     return 0;
 }
+
+#endif /* GENETICPUZZLE_H_ */

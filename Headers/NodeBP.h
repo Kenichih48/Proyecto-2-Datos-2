@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 #ifndef GENETICPUZZLE_NODEBP_H
 #define GENETICPUZZLE_NODEBP_H
 

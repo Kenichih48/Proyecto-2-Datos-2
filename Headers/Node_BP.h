@@ -5,7 +5,7 @@
 
 using namespace std;
 
-class NodeBP
+class NodeBPG
 {
     private:
         int h = 0;
@@ -13,11 +13,11 @@ class NodeBP
         int f = 0;
     public:
         string name; //nombre de la variable
-        NodeBP* next; //puntero hacia el nodo siguiente en la lista
-        NodeBP* prev; //puntero hacia el nodo anterior en la lista
-        NodeBP* parent; 
-        NodeBP* getParent(){return this->parent;}
-        void setParent(NodeBP* parent){this->parent = parent;}
+        NodeBPG* next; //puntero hacia el nodo siguiente en la lista
+        NodeBPG* prev; //puntero hacia el nodo anterior en la lista
+        NodeBPG* parent = NULL; 
+        NodeBPG* getParent(){return this->parent;}
+        void setParent(NodeBPG* parent){this->parent = parent;}
         int getH(){return this->h;}
         int getG(){return this->g;}
         int getF(){return this->f;}

@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 #ifndef GENETICPUZZLE_GENETICALGORITHM_H
 #define GENETICPUZZLE_GENETICALGORITHM_H
 #include "UtilityProgram.h"

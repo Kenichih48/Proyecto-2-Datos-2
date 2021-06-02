@@ -1,5 +1,5 @@
 #include <SFML/Network.hpp>
-#include "../Headers/GeneticAlgorithm.h"
+#include "GeneticAlgorithm.h"
 #include <iostream>
 
 using namespace sf;
