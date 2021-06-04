@@ -2,10 +2,15 @@
 #include <string.h>
 #include <SFML/Network.hpp>
 #include <unistd.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
 #include "BP_GUI.h"
 #include "Shoe.h"
 
 BPGui::BPGui(){
+
+    srand(time(NULL));
 
     sf::IpAddress ip = sf::IpAddress::getLocalAddress();
     sf::TcpSocket socket;
@@ -112,12 +117,6 @@ BPGui::BPGui(){
 
     //Creado Sprites Juego 
     setUpSprites();
-    sf::Texture ballTexture; //Sprite Bola 
-    if(!ballTexture.loadFromFile("/home/jose430/Documents/Proyecto-2-Datos-2/Img/Ball.png")){
-        std::cout << "Image not loaded" << std::endl;
-    }
-    sf::Sprite ball; 
-    ball.setTexture(ballTexture);
     ball.setPosition(400-(ball.getTextureRect().width/2),300-(ball.getTextureRect().height/2));
 
     //Creando menu para fuerza
@@ -152,75 +151,27 @@ BPGui::BPGui(){
     forceNumberText.setCharacterSize(50);
 
     //Creando variables de forceMenu
-    int degreeWhenForce = 0;
     string forceNumberString = "0";
-    bool applyingForce = false; 
-    sf::Vector2i ballPos(3,3);
+    ballPos.x = 3;
+    ballPos.y = 3;
+    
+
     //Creando Zapato para tirar 
     Shoe shoe = Shoe();
 
-    /*
-    //Creando Matriz de ejemplo
-    ListBP list4;
-    ListBP list5;
-    ListBP list6;
-    ListBP list7;
-    ListBP list8;
-    ListBP list9;
-    ListBP list10;
+    //Creando text scores 
+    sf::Text userScore, machineScore; 
+    userScore.setFont(font);
+    machineScore .setFont(font);
+    userScore.setCharacterSize(60);
+    machineScore.setCharacterSize(60);
+    userScore.setFillColor(sf::Color::White);
+    machineScore.setFillColor(sf::Color::White);
+    userScore.setPosition(20,530);
+    machineScore.setPosition(750,530);
+    userScore.setString(to_string(userGoals));
+    machineScore.setString(to_string(machineGoals));
 
-    for(int i = 0; i < 7; i++){
-        NodeBPG* newNode1 = new NodeBPG();
-        NodeBPG* newNode2 = new NodeBPG();
-        NodeBPG* newNode3 = new NodeBPG();
-        NodeBPG* newNode4 = new NodeBPG();
-        NodeBPG* newNode5 = new NodeBPG();
-        NodeBPG* newNode6 = new NodeBPG();
-        NodeBPG* newNode7 = new NodeBPG();
-
-        newNode1->name = "0";
-        newNode2->name = "0";
-        newNode3->name = "0";
-        newNode4->name = "0";
-        newNode5->name = "0";
-        newNode6->name = "0";
-        newNode7->name = "0";
-
-        list4.append(newNode1);
-        list5.append(newNode2);
-        list6.append(newNode3);
-        list7.append(newNode4);
-        list8.append(newNode5);
-        list9.append(newNode6);
-        list10.append(newNode7);
-    }
-
-    MatrixBP* matrix2 = new MatrixBP();
-    matrix2->append(list4);
-    matrix2->append(list5);
-    matrix2->append(list6);
-    matrix2->append(list7);
-    matrix2->append(list8);
-    matrix2->append(list9);
-    matrix2->append(list10);
-    
-    matrix2->at(4)->at(1)->name = "2";
-    matrix2->at(3)->at(1)->name = "1";
-    matrix2->at(1)->at(2)->name = "1";
-    matrix2->at(6)->at(2)->name = "1";
-    matrix2->at(0)->at(2)->name = "1";
-    matrix2->at(3)->at(2)->name = "1";
-    matrix2->at(2)->at(4)->name = "1";
-    matrix2->at(5)->at(4)->name = "1";
-    matrix2->at(1)->at(5)->name = "1";
-    matrix2->at(3)->at(5)->name = "1";
-    matrix2->at(5)->at(6)->name = "1";
-    matrix2->at(3)->at(6)->name = "3"; 
-    
-    matrix2->print();*/
-
-    MatrixBP matrix;
-    string matrixString;
 
     while (window.isOpen())
     {
@@ -343,107 +294,11 @@ BPGui::BPGui(){
                         degreeWhenForce = shoe.getAngleDegree();
                     } else {
                         if(forceReady.getGlobalBounds().contains(mousePos)){
-                            int force = 0;
+                            force = 0;
                             try{
                                 force = std::stoi(forceNumberString);
                             } catch(std::exception e){
                                 std::cout << "Could not load player and goal number" << std::endl;
-                            }
-                            if(force >=  0 && force <= 3){
-                                applyingForce = false;
-                                while(force > 0){
-                                    if(
-                                        (degreeWhenForce >= 0 && degreeWhenForce <= 30) ||
-                                        (degreeWhenForce >= 330 && degreeWhenForce <=  360)
-                                    ){
-                                        //Hacia izquierda
-                                        if(
-                                            ballPos.x-1 >= 0 &&
-                                            matrix.at(ballPos.y)->at(ballPos.x-1)->name != "1"
-                                        ){
-                                            ballPos.x--;
-                                        }
-                                    } else if(
-                                        (degreeWhenForce >= 150 && degreeWhenForce <= 180) ||
-                                        (degreeWhenForce >= 180 && degreeWhenForce <=  210)
-                                    ){
-                                        //Hacia derecha
-                                        if(
-                                            ballPos.x+1 < matrix.at(ballPos.y)->getLength() &&
-                                            matrix.at(ballPos.y)->at(ballPos.x+1)->name != "1"
-                                        ){
-                                            ballPos.x++;
-                                        }
-                                    } else if(
-                                        (degreeWhenForce >= 60 && degreeWhenForce <= 90) ||
-                                        (degreeWhenForce >= 90 && degreeWhenForce <=  120)
-                                    ){
-                                        //Hacia  abajo
-                                        if(
-                                            ballPos.y+1 < matrix.getLength() &&
-                                            matrix.at(ballPos.y+1)->at(ballPos.x)->name != "1"
-                                        ){
-                                            ballPos.y++;
-                                        }
-                                    } else if(
-                                        (degreeWhenForce >= 240 && degreeWhenForce <= 270) ||
-                                        (degreeWhenForce >= 270 && degreeWhenForce <=  300)
-                                    ){
-                                         //Hacia  arriba
-                                        if(
-                                            ballPos.y-1 >= 0 &&
-                                            matrix.at(ballPos.y-1)->at(ballPos.x)->name != "1"
-                                        ){
-                                            ballPos.y--;
-                                        }
-                                    } else if(degreeWhenForce > 30 && degreeWhenForce < 60){
-                                        //SurOeste
-                                        if(
-                                            ballPos.x-1 >= 0 &&
-                                            ballPos.y+1 < matrix.getLength() && 
-                                            matrix.at(ballPos.y+1)->at(ballPos.x-1)->name != "1"
-                                        ){
-                                            ballPos.y++;
-                                            ballPos.x--;
-                                        }
-                                    } else if(degreeWhenForce > 120 && degreeWhenForce < 150){
-                                        //SurEste
-                                        if(
-                                            ballPos.x+1 < matrix.at(ballPos.y)->getLength() &&
-                                            ballPos.y+1 < matrix.getLength() && 
-                                            matrix.at(ballPos.y+1)->at(ballPos.x+1)->name != "1"
-                                        ){
-                                            ballPos.y++;
-                                            ballPos.x++;
-                                        }
-                                    } else if(degreeWhenForce > 210 && degreeWhenForce < 240){
-                                        //Noreste
-                                        if(
-                                            ballPos.y-1 >= 0 &&
-                                            ballPos.x+1 < matrix.at(ballPos.y)->getLength() && 
-                                            matrix.at(ballPos.y-1)->at(ballPos.x+1)->name != "1"
-                                        ){
-                                            ballPos.y--;
-                                            ballPos.x++;
-                                        }
-                                    } else if(degreeWhenForce > 300 && degreeWhenForce < 330){
-                                        //SurOeste
-                                        if(
-                                            ballPos.y-1 >= 0 &&
-                                            ballPos.x-1 >= 0 && 
-                                            matrix.at(ballPos.y-1)->at(ballPos.x-1)->name != "1"
-                                        ){
-                                            ballPos.y--;
-                                            ballPos.x--;
-                                        }
-                                    }
-                                    ball.setPosition(
-                                        ((window.getSize().x/matrix.at(ballPos.y)->getLength())*ballPos.x) + 37,
-                                        (((window.getSize().y-50)/matrix.getLength())*ballPos.y) + 26
-                                    );
-                                    sleep(5);
-                                    force--;
-                                } 
                             }
                         }
                     }
@@ -476,10 +331,16 @@ BPGui::BPGui(){
                 window.draw(tryAgain);
             }
 
-        } else { //Dibujando Juego
+        } else { //Dibujando Juego (agregar if inTurn)
+            
+            applyForceBall(&window,&userScore,&machineScore);
+            
             drawFromMatrix(&window,&matrix);
             window.draw(ball);
             window.draw(*shoe.getFoot());
+            window.draw(userScore);
+            window.draw(machineScore);
+            
             if(applyingForce){
                 window.draw(forceMenu);
                 window.draw(forceNumber);
@@ -487,6 +348,24 @@ BPGui::BPGui(){
                 window.draw(forceReady);
                 window.draw(forceReadyText);
                 window.draw(forceNumberText);
+            } else {
+                if(force < 1){
+                    //Get pathfinders path 
+                    vector<vector<int>> path; 
+                    vector<int> element1;
+                    element1.push_back(4);
+                    element1.push_back(3);
+                    vector<int> element2;
+                    element2.push_back(5);
+                    element2.push_back(3);
+                    vector<int> element3;
+                    element3.push_back(6);
+                    element3.push_back(3);
+                    path.push_back(element1);
+                    path.push_back(element2);
+                    path.push_back(element3);
+                    showPathfinderFrom(path,&window);
+                }
             }
         }
 
@@ -520,6 +399,163 @@ void BPGui::drawFromMatrix(sf::RenderWindow* window, MatrixBP* matrix){
     }
 }
 
+void BPGui::showPathfinderFrom(vector<vector<int>> path,sf::RenderWindow* window){
+    sf::Sprite newBall = ball;
+    newBall.setColor(sf::Color(255,255,255,128));
+    for(vector<int> elements : path){
+        newBall.setPosition(
+            ((window->getSize().x/matrix.at(elements.at(1))->getLength())*elements .at(0)) + 37,
+            (((window->getSize().y-50)/matrix.getLength())*elements .at(1)) + 26
+        );
+        window->draw(newBall);
+    }
+}
+void BPGui::moveFrom(
+    MatrixBP backtrackingMatrix,
+    sf::RenderWindow* window,
+    sf::Text* userScore, 
+    sf::Text* machineScore
+    ){
+
+    sf::Sprite newBall = ball;
+    newBall.setColor(sf::Color(255,255,255,128));
+    int newX;
+    int newY;
+    for(int i = 0; i < backtrackingMatrix.getLength(); i++){
+        ListBP* newList = backtrackingMatrix.at(i);
+        for(int j = 0; j < newList->getLength();j++){
+            NodeBPG* newNode = newList->at(j);
+            if(newNode->name == "1"){
+                if(abs(i-ballPos.y) == 1 && abs(j-ballPos.x) == 1){
+                    newX = j;
+                    newY = i;
+                }
+                newBall.setPosition(
+                    ((window->getSize().x/matrix.at(i)->getLength())*j) + 37,
+                    (((window->getSize().y-50)/matrix.getLength())*i) + 26
+                );
+                window->draw(newBall);
+            }
+        }
+    }
+    sleep(1);
+    force = random_num();
+    applyForceBall(window,userScore,machineScore);
+}
+
+void BPGui::applyForceBall(sf::RenderWindow* window, sf::Text* userScore, sf::Text* machineScore){
+    if(force >  0 && force <= 3){
+        applyingForce = false;
+        if(force > 0){
+            if(
+                (degreeWhenForce >= 0 && degreeWhenForce <= 30) ||
+                (degreeWhenForce >= 330 && degreeWhenForce <=  360)
+            ){
+                //Hacia izquierda
+                if(
+                    ballPos.x-1 >= 0 &&
+                    matrix.at(ballPos.y)->at(ballPos.x-1)->name != "1"
+                ){
+                    ballPos.x--;
+                }       
+            } else if(
+                (degreeWhenForce >= 150 && degreeWhenForce <= 180) ||
+                (degreeWhenForce >= 180 && degreeWhenForce <=  210)
+            ){
+                //Hacia derecha
+                if(
+                    ballPos.x+1 < matrix.at(ballPos.y)->getLength() &&
+                    matrix.at(ballPos.y)->at(ballPos.x+1)->name != "1"
+                ){
+                    ballPos.x++;
+                }
+            } else if(
+                (degreeWhenForce >= 60 && degreeWhenForce <= 90) ||
+                (degreeWhenForce >= 90 && degreeWhenForce <=  120)
+            ){
+                //Hacia  abajo
+                if(
+                    ballPos.y+1 < matrix.getLength() &&
+                    matrix.at(ballPos.y+1)->at(ballPos.x)->name != "1"
+                ){
+                    ballPos.y++;
+                }
+            } else if(
+                (degreeWhenForce >= 240 && degreeWhenForce <= 270) ||
+                (degreeWhenForce >= 270 && degreeWhenForce <=  300)
+            ){
+                //Hacia  arriba
+                if(
+                    ballPos.y-1 >= 0 &&
+                    matrix.at(ballPos.y-1)->at(ballPos.x)->name != "1"
+                ){
+                    ballPos.y--;
+                }
+            } else if(degreeWhenForce > 30 && degreeWhenForce < 60){
+                //SurOeste
+                if(
+                    ballPos.x-1 >= 0 &&
+                    ballPos.y+1 < matrix.getLength() && 
+                    matrix.at(ballPos.y+1)->at(ballPos.x-1)->name != "1"
+                ){
+                    ballPos.y++;
+                    ballPos.x--;
+                }
+            } else if(degreeWhenForce > 120 && degreeWhenForce < 150){
+                //SurEste
+                if(
+                    ballPos.x+1 < matrix.at(ballPos.y)->getLength() &&
+                    ballPos.y+1 < matrix.getLength() && 
+                    matrix.at(ballPos.y+1)->at(ballPos.x+1)->name != "1"
+                ){
+                    ballPos.y++;
+                    ballPos.x++;
+                }
+            } else if(degreeWhenForce > 210 && degreeWhenForce < 240){
+                //Noreste
+                if(
+                    ballPos.y-1 >= 0 &&
+                    ballPos.x+1 < matrix.at(ballPos.y)->getLength() && 
+                    matrix.at(ballPos.y-1)->at(ballPos.x+1)->name != "1"
+                ){
+                    ballPos.y--;
+                    ballPos.x++;
+                }
+            } else if(degreeWhenForce > 300 && degreeWhenForce < 330){
+                //SurOeste
+                if(
+                    ballPos.y-1 >= 0 &&
+                    ballPos.x-1 >= 0 && 
+                    matrix.at(ballPos.y-1)->at(ballPos.x-1)->name != "1"
+                ){
+                    ballPos.y--;
+                    ballPos.x--;
+                }
+            }
+                if(matrix.at(ballPos.y)->at(ballPos.x)->name == "3"){
+                    userGoals++;
+                    userScore->setString(to_string(userGoals));
+                    ballPos.x = 3; ballPos.y = 3; force = 0;
+                } else if(matrix.at(ballPos.y)->at(ballPos.x)->name == "4"){
+                    machineGoals++;
+                    machineScore->setString(to_string(machineGoals));
+                    ballPos.x = 3; ballPos.y = 3; force = 0;
+                }
+                ball.setPosition(
+                    ((window->getSize().x/matrix.at(ballPos.y)->getLength())*ballPos.x) + 37,
+                    (((window->getSize().y-50)/matrix.getLength())*ballPos.y) + 26
+                );
+                sleep(0.5);
+                force--;
+                    /*
+                    if(force == 0){
+                        inTurn = false; 
+                    }
+                    */
+                } 
+            }
+}
+
 void BPGui::setUpSprites(){
     if(!players.loadFromFile("/home/jose430/Documents/Proyecto-2-Datos-2/Img/FootballPlayers.png")){
         std::cout << "Image not loaded" << std::endl;
@@ -528,6 +564,12 @@ void BPGui::setUpSprites(){
     machine.setTexture(players);
     user.setTextureRect(sf::IntRect(0,0,77,85));
     machine.setTextureRect(sf::IntRect(0,85,77,170));
+
+     //Sprite Bola 
+    if(!ballTexture.loadFromFile("/home/jose430/Documents/Proyecto-2-Datos-2/Img/Ball.png")){
+        std::cout << "Image not loaded" << std::endl;
+    }
+    ball.setTexture(ballTexture);
 }
 
 MatrixBP BPGui::generateMatrixFrom(string matrixString){
@@ -540,10 +582,20 @@ MatrixBP BPGui::generateMatrixFrom(string matrixString){
             char c; 
             c = matrixString[j+(8*i)];
             s += c;
-            list.append(s);
+            std::cout << ((j+(8*i))+1) % 8 << " ";
+            if(((j+(8*i))+1) % 8 > 0){
+                list.append(s);
+            }
         }
+        std::cout << std::endl;
         matrix.append(list);
     }
 
     return matrix;
+}
+
+int BPGui::random_num(){
+    int range = 3;
+    int random_int = (rand() % range) + 1;
+    return random_int;
 }
