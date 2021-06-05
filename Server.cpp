@@ -9,10 +9,12 @@
 MatrixBP generateCleanMatrix();
 MatrixBP generatePlayingfield(int players);
 int random_num();
+MatrixBP generateSolution(MatrixBP maze, MatrixBP sol);
 bool generateSolution_aux(MatrixBP maze, int x, int y, MatrixBP sol);
+bool check_safety(MatrixBP maze, int x, int y);
 
 int main(){
-
+    /*
     sf::IpAddress ip = sf::IpAddress::getLocalAddress();
     sf::TcpSocket socket;
     sf::TcpListener listener;
@@ -32,7 +34,7 @@ int main(){
             std::cout <<  numberPlayersInt << numberGoalsInt << std::endl;
             break;
         }
-    }
+    }*/
     
     MatrixBP sol = MatrixBP();
     sol = generateCleanMatrix();
@@ -41,14 +43,15 @@ int main(){
     std::cout << std::endl;
 
     MatrixBP maze = MatrixBP();
-    maze = generatePlayingfield(numberPlayersInt);
+    maze = generatePlayingfield(6);
     string mazeString = maze.print();
     std::cout << mazeString;
 
     sol = generateSolution(maze, sol);
+    //string solString = sol.print();
+    //packetS << solString;
+    //socket.send(packetS);
 
-    packetS << mazeString;
-    socket.send(packetS);
 
     /*
     List list1 = List();
@@ -158,7 +161,7 @@ MatrixBP generateCleanMatrix(){
 //función que verifica si un cuadro es libre y parte de la matriz
 bool check_safety(MatrixBP maze, int x, int y)
 {
-    if (x >= 0 && x < 7 && y >= 0 && y < 7 && maze.at(x)->at(y)->name == "0"){
+    if (x >= 0 && x < 7 && y >= 0 && y < 7 && maze.at(x)->at(y)->name != "1"){
         return true;
     }
     return false;
@@ -167,7 +170,19 @@ bool check_safety(MatrixBP maze, int x, int y)
 //función que genera la ruta más corta entre la bola y el gol del jugador por backtracking
 MatrixBP generateSolution(MatrixBP maze, MatrixBP sol)
 {
-    if (generateSolution_aux(maze, 0, 0, sol) == false) {
+    int newX = 0; int newY = 0;
+    for(int i = 0; i < maze.getLength(); i++){
+        ListBP* newList = maze.at(i);
+        for(int j = 0; j < newList->getLength();j++){
+            NodeBPG* newNode = newList->at(j);
+            if(newNode->name == "2"){
+                newX = j;
+                newY = i;
+            }
+        }
+    }
+    std::cout << newX << newY << std::endl;
+    if (generateSolution_aux(maze, newY, newX, sol) == false) {
         printf("Solution doesn't exist");
         return sol;
     }
@@ -178,6 +193,7 @@ MatrixBP generateSolution(MatrixBP maze, MatrixBP sol)
 //función auxiliar de generate solution, es la parte recursiva del backtracking
 bool generateSolution_aux(MatrixBP maze, int x, int y, MatrixBP sol)
 {
+    std::cout << x << y << std::endl;
     // caso gol
     if (x == 3 && y == 0 && maze.at(x)->at(y)->name == "4") {
         sol.at(x)->at(y)->name = "1";
@@ -185,13 +201,24 @@ bool generateSolution_aux(MatrixBP maze, int x, int y, MatrixBP sol)
     }
  
     if (check_safety(maze, x, y) == true) { 
+        std::cout << "is safe" << std::endl;
         if (sol.at(x)->at(y)->name == "1"){
             return false;
         }
         sol.at(x)->at(y)->name = "1";
+
+        //nos movemos un bloque hacia la izquierda
+        if (generateSolution_aux(maze, x, y - 1, sol) == true){
+            return true;
+        }
  
         //nos movemos un bloque hacia abajo
         if (generateSolution_aux(maze, x + 1, y, sol) == true){
+            return true;
+        }
+ 
+        //nos movemos un bloque hacia arriba
+        if (generateSolution_aux(maze, x - 1, y, sol) == true){
             return true;
         }
  
@@ -200,16 +227,6 @@ bool generateSolution_aux(MatrixBP maze, int x, int y, MatrixBP sol)
             return true;
         }
        
-        //nos movemos un bloque hacia arriba
-        if (generateSolution_aux(maze, x - 1, y, sol) == true){
-            return true;
-        }
- 
-        //nos movemos un bloque hacia la izquierda
-        if (generateSolution_aux(maze, x, y - 1, sol) == true){
-            return true;
-        }
- 
         //si ninguna de las 4 direcciones sirve, significa que el bloque actual no pertenece a la solución
         sol.at(x)->at(y)->name = "0";
         return false;

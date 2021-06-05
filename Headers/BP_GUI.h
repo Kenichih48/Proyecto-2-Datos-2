@@ -22,6 +22,7 @@ class BPGui{
         bool applyingForce = false;
         sf::Vector2i ballPos;
         
+        
 
         BPGui();
         void drawFromMatrix(sf::RenderWindow* window, MatrixBP* matrix);

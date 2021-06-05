@@ -289,10 +289,10 @@ BPGui::BPGui(){
                         }
                     }
                 } else {
-                    if(!applyingForce){
+                    if(!applyingForce && isTurn){
                         applyingForce = true;
                         degreeWhenForce = shoe.getAngleDegree();
-                    } else {
+                    } else if(isTurn){
                         if(forceReady.getGlobalBounds().contains(mousePos)){
                             force = 0;
                             try{
@@ -331,41 +331,41 @@ BPGui::BPGui(){
                 window.draw(tryAgain);
             }
 
-        } else { //Dibujando Juego (agregar if inTurn)
+        } else { //Dibujando Juego (agregar if isTurn)
             
-            applyForceBall(&window,&userScore,&machineScore);
+            if (isTurn){
+                applyForceBall(&window,&userScore,&machineScore);
             
-            drawFromMatrix(&window,&matrix);
-            window.draw(ball);
-            window.draw(*shoe.getFoot());
-            window.draw(userScore);
-            window.draw(machineScore);
-            
-            if(applyingForce){
-                window.draw(forceMenu);
-                window.draw(forceNumber);
-                window.draw(forcePrompt);
-                window.draw(forceReady);
-                window.draw(forceReadyText);
-                window.draw(forceNumberText);
-            } else {
-                if(force < 1){
-                    //Get pathfinders path 
-                    vector<vector<int>> path; 
-                    vector<int> element1;
-                    element1.push_back(4);
-                    element1.push_back(3);
-                    vector<int> element2;
-                    element2.push_back(5);
-                    element2.push_back(3);
-                    vector<int> element3;
-                    element3.push_back(6);
-                    element3.push_back(3);
-                    path.push_back(element1);
-                    path.push_back(element2);
-                    path.push_back(element3);
-                    showPathfinderFrom(path,&window);
+                userScore.setFillColor(sf::Color(231, 76, 60));
+                machineScore.setFillColor(sf::Color::White);
+
+                drawFromMatrix(&window,&matrix);
+                window.draw(ball);
+                window.draw(*shoe.getFoot());
+                window.draw(userScore);
+                window.draw(machineScore);
+                
+                if(applyingForce){
+                    window.draw(forceMenu);
+                    window.draw(forceNumber);
+                    window.draw(forcePrompt);
+                    window.draw(forceReady);
+                    window.draw(forceReadyText);
+                    window.draw(forceNumberText);
+                } else {
+                    if(force < 1){
+                        //get pathfinding
+                        machineScore.setFillColor(sf::Color(231, 76, 60));
+                        userScore.setFillColor(sf::Color::White);
+
+                        drawFromMatrix(&window,&matrix);
+                        window.draw(ball);
+                        window.draw(userScore);
+                        window.draw(machineScore);
+                    }
                 }
+            } else{ 
+                //get backtracking 
             }
         }
 
@@ -439,6 +439,7 @@ void BPGui::moveFrom(
         }
     }
     sleep(1);
+    //añadir casos para degreeAngle
     force = random_num();
     applyForceBall(window,userScore,machineScore);
 }
@@ -547,9 +548,12 @@ void BPGui::applyForceBall(sf::RenderWindow* window, sf::Text* userScore, sf::Te
                 );
                 sleep(0.5);
                 force--;
+                if(force == 0){
+                    isTurn == !isTurn;
+                }
                     /*
                     if(force == 0){
-                        inTurn = false; 
+                        isTurn = false; 
                     }
                     */
                 } 
