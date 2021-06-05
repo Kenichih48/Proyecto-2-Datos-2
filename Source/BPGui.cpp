@@ -355,8 +355,9 @@ BPGui::BPGui(){
                 } else {
                     if(force < 1){
                         //get pathfinding
-                        machineScore.setFillColor(sf::Color(231, 76, 60));
-                        userScore.setFillColor(sf::Color::White);
+                        //packetS.clear();
+                        //packetS << 1 << ballPos.x << ballPos.y;
+                        //socket.send(packetS);
 
                         drawFromMatrix(&window,&matrix);
                         window.draw(ball);
@@ -365,7 +366,40 @@ BPGui::BPGui(){
                     }
                 }
             } else{ 
+
+                std::cout << "Not turn"<< std::endl;
+
                 //get backtracking 
+                packetS.clear();
+                packetS << 2 << ballPos.x << ballPos.y;
+                socket.send(packetS);
+
+                
+                string backtrackString;
+                packetR.clear();
+                
+                while(true){
+                    socket.receive(packetR);
+                    if(packetR.getData() != NULL){
+                        packetR >> backtrackString;
+                        std::cout <<  backtrackString << std::endl;
+                        break;
+                    }
+                }
+
+                MatrixBP backtrackMatrix;
+                backtrackMatrix = generateMatrixFrom(backtrackString);
+                backtrackMatrix.print();
+
+                moveFrom(backtrackMatrix,&window,&userScore,&machineScore);
+
+                machineScore.setFillColor(sf::Color(231, 76, 60));
+                userScore.setFillColor(sf::Color::White);
+                drawFromMatrix(&window,&matrix);
+                window.draw(ball);
+                window.draw(userScore);
+                window.draw(machineScore);
+
             }
         }
 
@@ -440,8 +474,19 @@ void BPGui::moveFrom(
     }
     sleep(1);
     //añadir casos para degreeAngle
+    if(ballPos.y-newY > 0){
+        degreeWhenForce = 270;
+    } else if(ballPos.y - newY < 0){
+        degreeWhenForce = 90;
+    } else if(ballPos.x - newX > 0){
+        degreeWhenForce = 180;
+    } else if(ballPos.x = newX < 0){ 
+        degreeWhenForce = 0;
+    }
     force = random_num();
-    applyForceBall(window,userScore,machineScore);
+    while(force > 0){
+        applyForceBall(window,userScore,machineScore);
+    }
 }
 
 void BPGui::applyForceBall(sf::RenderWindow* window, sf::Text* userScore, sf::Text* machineScore){
@@ -533,31 +578,29 @@ void BPGui::applyForceBall(sf::RenderWindow* window, sf::Text* userScore, sf::Te
                     ballPos.x--;
                 }
             }
-                if(matrix.at(ballPos.y)->at(ballPos.x)->name == "3"){
-                    userGoals++;
-                    userScore->setString(to_string(userGoals));
-                    ballPos.x = 3; ballPos.y = 3; force = 0;
-                } else if(matrix.at(ballPos.y)->at(ballPos.x)->name == "4"){
-                    machineGoals++;
-                    machineScore->setString(to_string(machineGoals));
-                    ballPos.x = 3; ballPos.y = 3; force = 0;
-                }
-                ball.setPosition(
-                    ((window->getSize().x/matrix.at(ballPos.y)->getLength())*ballPos.x) + 37,
-                    (((window->getSize().y-50)/matrix.getLength())*ballPos.y) + 26
-                );
-                sleep(0.5);
-                force--;
-                if(force == 0){
-                    isTurn == !isTurn;
-                }
-                    /*
-                    if(force == 0){
-                        isTurn = false; 
-                    }
-                    */
-                } 
+            if(matrix.at(ballPos.y)->at(ballPos.x)->name == "3"){
+                userGoals++;
+                userScore->setString(to_string(userGoals));
+                ballPos.x = 3; ballPos.y = 3; force = 0;
+                isTurn = !isTurn;
+            } else if(matrix.at(ballPos.y)->at(ballPos.x)->name == "4"){
+                machineGoals++;
+                machineScore->setString(to_string(machineGoals));
+                ballPos.x = 3; ballPos.y = 3; force = 0;
+                isTurn = !isTurn;
             }
+            ball.setPosition(
+                ((window->getSize().x/matrix.at(ballPos.y)->getLength())*ballPos.x) + 37,
+                (((window->getSize().y-50)/matrix.getLength())*ballPos.y) + 26
+            );
+            sleep(0.5);
+            force--;
+            if(force == 0){
+                std::cout << "Changed turn!" << std::endl;
+                isTurn = !isTurn;
+            }
+        } 
+    }
 }
 
 void BPGui::setUpSprites(){

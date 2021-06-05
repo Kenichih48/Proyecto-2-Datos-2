@@ -9,12 +9,12 @@
 MatrixBP generateCleanMatrix();
 MatrixBP generatePlayingfield(int players);
 int random_num();
-MatrixBP generateSolution(MatrixBP maze, MatrixBP sol);
+MatrixBP generateSolution(MatrixBP maze, MatrixBP sol, int ball_x, int ball_y);
 bool generateSolution_aux(MatrixBP maze, int x, int y, MatrixBP sol);
 bool check_safety(MatrixBP maze, int x, int y);
 
 int main(){
-    /*
+    
     sf::IpAddress ip = sf::IpAddress::getLocalAddress();
     sf::TcpSocket socket;
     sf::TcpListener listener;
@@ -54,6 +54,7 @@ int main(){
         }
         else{
             while(true){
+                packetR.clear();
                 socket.receive(packetR);
                 if(packetR.getData() != NULL){
                     packetR >> turn >> new_ball_x >> new_ball_y;
@@ -71,54 +72,16 @@ int main(){
                 old_ball_x = new_ball_x;
                 old_ball_y = new_ball_y;
                 sol = generateCleanMatrix();
-                sol = generateSolution(maze, sol, new_ball_x, new_ball_y);
+                sol = generateSolution(maze, sol, new_ball_y, new_ball_x);
                 string solString = sol.print();
                 std::cout << solString;
+                packetS.clear();
                 packetS << solString;
                 socket.send(packetS);
             }
         }
     }
     
-    
-    
-
-    /*
-    List list1 = List();
-    List list2 = List();
-    List list3 = List();
-
-    std::cout << "Created lists" << std::endl;
-
-
-    Matrix newMatrix1 = Matrix();
-    newMatrix1.append(list1);
-    newMatrix1.append(list2);
-    newMatrix1.append(list3);
-
-    Matrix newMatrix2 = Matrix();
-
-    std::cout << "Created Matrix" << std::endl;
-
-    
-    List l = newMatrix1.at(1);
-    
-    
-    for(int i = 0; i <= newMatrix1.getLength()-1; i++){
-        List list = newMatrix1.at(i);
-        std::cout << "Before" << std::endl;
-        for(int j = 0; j <= 3; j++){
-            list.append("0",0,0,0,true,0);
-        }
-        std::cout << "After" << std::endl;
-        newMatrix2.append(list);
-    }
-
-    std::cout << "Appended full lists" << std::endl;
-
-    newMatrix2.print();
-
-    std::cout << "finished print" << std::endl;*/
 }
 
 //Función que genera las posiciones aleatorias iniciales de los jugadores
@@ -200,30 +163,17 @@ bool check_safety(MatrixBP maze, int x, int y)
 //función que genera la ruta más corta entre la bola y el gol del jugador por backtracking
 MatrixBP generateSolution(MatrixBP maze, MatrixBP sol, int ball_x, int ball_y)
 {
-    int newX = 0; int newY = 0;
-    for(int i = 0; i < maze.getLength(); i++){
-        ListBP* newList = maze.at(i);
-        for(int j = 0; j < newList->getLength();j++){
-            NodeBPG* newNode = newList->at(j);
-            if(newNode->name == "2"){
-                newX = j;
-                newY = i;
-            }
-        }
-    }
-    std::cout << newX << newY << std::endl;
-    if (generateSolution_aux(maze, newY, newX, sol) == false) {
+    std::cout << ball_x << ball_y << std::endl;
+    if (generateSolution_aux(maze, ball_x, ball_y, sol) == false) {
         printf("Solution doesn't exist");
         return sol;
     }
-    sol.print();
     return sol;
 }
  
 //función auxiliar de generate solution, es la parte recursiva del backtracking
 bool generateSolution_aux(MatrixBP maze, int x, int y, MatrixBP sol)
 {
-    std::cout << x << y << std::endl;
     // caso gol
     if (x == 3 && y == 0 && maze.at(x)->at(y)->name == "4") {
         sol.at(x)->at(y)->name = "1";
@@ -231,7 +181,6 @@ bool generateSolution_aux(MatrixBP maze, int x, int y, MatrixBP sol)
     }
  
     if (check_safety(maze, x, y) == true) { 
-        std::cout << "is safe" << std::endl;
         if (sol.at(x)->at(y)->name == "1"){
             return false;
         }
