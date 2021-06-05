@@ -22,33 +22,64 @@ int main(){
 
     int numberGoalsInt;
     int numberPlayersInt;
-    bool stuff = true;
+    int turn;
+    int old_ball_x = 3;
+    int old_ball_y = 3;
+    int new_ball_x;
+    int new_ball_y;
+    bool running = true;
+    bool first_run = false;
     srand(time(NULL));
 
-    while (stuff){
-        socket.receive(packetR);
-        if(packetR.getData() != NULL){
-            packetR >> numberPlayersInt >> numberGoalsInt;
-            std::cout <<  numberPlayersInt << numberGoalsInt << std::endl;
-            break;
+    MatrixBP maze = MatrixBP();
+
+    while (running){
+        if (first_run != true){
+            while(true){
+                socket.receive(packetR);
+                if(packetR.getData() != NULL){
+                    packetR >> numberPlayersInt >> numberGoalsInt;
+                    std::cout <<  numberPlayersInt << numberGoalsInt << std::endl;
+                    break;
+                }
+            }
+            first_run = true;
+            maze = generatePlayingfield(numberPlayersInt);
+            string mazeString = maze.print();
+            std::cout << mazeString;
+            packetS << mazeString;
+            socket.send(packetS);
+        }
+        else{
+            while(true){
+                socket.receive(packetR);
+                if(packetR.getData() != NULL){
+                    packetR >> turn >> new_ball_x >> new_ball_y;
+                    std::cout <<  turn << std::endl;
+                    break;
+                }
+            }
+            if (turn == 1){
+                //Pathfinding
+            }
+            else{
+                MatrixBP sol = MatrixBP();
+                maze.at(old_ball_x)->at(old_ball_y)->name = "0";
+                maze.at(new_ball_x)->at(new_ball_y)->name = "2";
+                old_ball_x = new_ball_x;
+                old_ball_y = new_ball_y;
+                sol = generateCleanMatrix();
+                sol = generateSolution(maze, sol, new_ball_x, new_ball_y);
+                string solString = sol.print();
+                std::cout << solString;
+                packetS << solString;
+                socket.send(packetS);
+            }
         }
     }
     
-    MatrixBP sol = MatrixBP();
-    sol = generateCleanMatrix();
-    sol.print();
-
-    std::cout << std::endl;
-
-    MatrixBP maze = MatrixBP();
-    maze = generatePlayingfield(numberPlayersInt);
-    string mazeString = maze.print();
-    std::cout << mazeString;
-
-    sol = generateSolution(maze, sol);
-
-    packetS << mazeString;
-    socket.send(packetS);
+    
+    
 
     /*
     List list1 = List();
@@ -165,9 +196,9 @@ bool check_safety(MatrixBP maze, int x, int y)
 }
  
 //función que genera la ruta más corta entre la bola y el gol del jugador por backtracking
-MatrixBP generateSolution(MatrixBP maze, MatrixBP sol)
+MatrixBP generateSolution(MatrixBP maze, MatrixBP sol, int ball_x, int ball_y)
 {
-    if (generateSolution_aux(maze, 0, 0, sol) == false) {
+    if (generateSolution_aux(maze, ball_x, ball_y, sol) == false) {
         printf("Solution doesn't exist");
         return sol;
     }
