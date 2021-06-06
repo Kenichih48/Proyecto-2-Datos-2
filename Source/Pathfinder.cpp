@@ -50,7 +50,6 @@ void Pathfinder::checkSurrounding(){
                     bool is = false;
                     for(NodeBPG* ptr : this->closedList){
                         if(ptr == currentNode){
-                            //std::cout << "There is in closed" << std::endl;
                             is = true; 
                         }
                     } 
@@ -127,15 +126,13 @@ vector<vector<int>> Pathfinder::move(){
 
     while(currentNode->name != "3"){
 
-        std::cout << "CurrentX: " << currentX << "CurrentY: " << currentY << std::endl;
-        std::cout << "Current Name: " << currentNode->name << std::endl;
-
         closedList.push_back(currentNode);
 
         std::cout << "Closed: " << closedList.size() << std::endl;
 
         checkSurrounding();
 
+        /*
         for(int i = 0; i < this->field->getLength(); i++){
                 ListBP* newList = this->field->at(i);
                 for(int j = 0; j < newList->getLength(); j++){
@@ -143,11 +140,9 @@ vector<vector<int>> Pathfinder::move(){
                     std::cout << newNode->getG() << "," << newNode->getF() << " ";
                 }
                 std::cout << std::endl;
-            } 
+            }*/ 
 
         std::cout << "Open: " << openList.size() << std::endl;
-
-        std::cout << "After checking surroundings" << std::endl;
 
          int nextNodeIndex = 0;
 
@@ -159,8 +154,6 @@ vector<vector<int>> Pathfinder::move(){
                     lastF = this->openList.at(i)->getF();
                 }        
             }
-
-            std::cout << "After getting best Node, f: "<< lastF << std::endl;
 
             for(int i = 0; i < this->field->getLength(); i++){
                 ListBP* newList = this->field->at(i);
@@ -175,9 +168,6 @@ vector<vector<int>> Pathfinder::move(){
             } 
 
             openList.erase(openList.begin()+nextNodeIndex);
-
-            std::cout << "Open after elmination: " << openList.size() << std::endl;
-            std::cout << "CurrentX after: " << currentX << "CurrentY after: " << currentY << std::endl;
 
             currentList = this->field->at(this->currentY);
             currentNode = currentList->at(this->currentX);    

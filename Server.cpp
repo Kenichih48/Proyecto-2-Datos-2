@@ -5,6 +5,7 @@
 #include <SFML/Network.hpp>
 #include "Matrix_BP.h"
 #include "List_BP.h"
+#include "Pathfinder.h"
 
 MatrixBP generateCleanMatrix();
 MatrixBP generatePlayingfield(int players);
@@ -64,8 +65,28 @@ int main(){
             }
             if (turn == 1){
                 //Pathfinding
+                vector<vector<int>> sol;
+                maze.at(old_ball_x)->at(old_ball_y)->name = "0";
+                maze.at(new_ball_x)->at(new_ball_y)->name = "2";
+                old_ball_x = new_ball_x;
+                old_ball_y = new_ball_y;
+                Pathfinder finder = Pathfinder();
+                finder.setField(&maze);
+                finder.setH();
+                sol = finder.move();
+                std::cout << "finding ended" << std::endl;
+                string solString;
+                for(vector<int> elements : sol){
+                    solString += to_string(elements.at(0));
+                    solString += to_string(elements.at(1));
+                }
+                std::cout << solString;
+                packetS.clear();
+                packetS << solString;
+                socket.send(packetS);
             }
             else{
+                //Backtracking 
                 MatrixBP sol = MatrixBP();
                 maze.at(old_ball_x)->at(old_ball_y)->name = "0";
                 maze.at(new_ball_x)->at(new_ball_y)->name = "2";

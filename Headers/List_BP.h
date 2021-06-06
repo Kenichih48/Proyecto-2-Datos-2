@@ -142,7 +142,7 @@ class ListBP{
             NodeBPG* current = this->head;
             result->name ="Empty";
             int i = 0;
-            if(position < this->length){
+            if(position < this->length && position >= 0){
                 while(i < position){
                     current = current->next;
                     i++;

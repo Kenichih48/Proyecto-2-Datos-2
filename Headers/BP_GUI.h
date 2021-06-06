@@ -41,6 +41,7 @@ class BPGui{
         void setUpSprites();
         int random_num();
         MatrixBP generateMatrixFrom(string matrixString);
+        vector<vector<int>> buildPathfinderFrom(string pathfindingString);
         
         
         
