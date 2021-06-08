@@ -3,6 +3,13 @@
 
 #include <string>
 
+/**
+ * @file Node_BP.h
+ * @version 1.0
+ * @title Node_BP
+ * @brief Nodo para Lista_BP
+ */
+
 using namespace std;
 
 class NodeBPG

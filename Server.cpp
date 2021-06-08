@@ -9,6 +9,13 @@
 #include "GeneticAlgorithm.h"
 #include "BP_GUI.h"
 
+/**
+ * @file Server.cpp
+ * @version 1.0
+ * @title Server
+ * @brief maneja la logica de los algoritmos y se contacta con cliente por sockets
+ */
+
 using namespace sf;
 using namespace std;
 

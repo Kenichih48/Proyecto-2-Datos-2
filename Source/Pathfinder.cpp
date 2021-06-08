@@ -1,6 +1,13 @@
 #include "Pathfinder.h"
 
 /**
+ * @file Pathfinder.cpp
+ * @version 1.0
+ * @title Pathfinder
+ * @brief Manejo de la logica del algoritmo pathfinder A*
+ */
+
+/**
  * @brief guarda la mtriz como la matrix del Pathfinder y le da valores iniciales a otras variables
  * @param MatrixBP* puntero a la matriz que se quiere trabajar
  * */

@@ -10,6 +10,14 @@
 #include "Pathfinder.h"
 
 /**
+ * @file BPGui.cpp
+ * @version 1.0
+ * @title BPGui
+ * @brief Gui de BP Game
+ */
+
+
+/**
 *@brief Constructor de la clase, crea interfaz de BP Game
 **/
 BPGui::BPGui(){

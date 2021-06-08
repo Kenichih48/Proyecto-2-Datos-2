@@ -4,6 +4,13 @@
 #include "List_BP.h"
 #include <sstream>
 
+/**
+ * @file Matrix_BP.h
+ * @version 1.0
+ * @title Matrix_BP
+ * @brief Objeto matriz utilizado para algoritmo pathfinding a* y backtracking
+ */
+
 class MatrixNodeBPG{
     private: 
         ListBP* element; 

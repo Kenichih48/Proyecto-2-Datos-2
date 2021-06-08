@@ -5,6 +5,13 @@
 #include <iostream>
 #include <sstream>
 
+/**
+ * @file List_BP.h
+ * @version 1.0
+ * @title List_BP
+ * @brief Lista utilizada para Matriz_BP
+ */
+
 using namespace std;
 
 class ListBP{

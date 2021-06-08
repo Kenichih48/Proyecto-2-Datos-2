@@ -3,6 +3,13 @@
 #include <math.h>
 
 /**
+ * @file Shoe.cpp
+ * @version 1.0
+ * @title Shoe
+ * @brief Objeto para recibir input del mouse
+ */
+
+/**
  * @brief contructor de shoe, carga imagen del sprite 
  **/
 Shoe::Shoe(){

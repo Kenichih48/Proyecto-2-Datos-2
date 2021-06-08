@@ -4,6 +4,13 @@
 #include "geneticPuzzle.h"
 
 /**
+ * @file Menu.cpp
+ * @version 1.0
+ * @title Menu
+ * @brief Manejo de ingreso a BP Game y GP
+ */
+
+/**
  * @brief funcion main, crea menu para escoger entre BP Game y GP
  * */
 int main(){
