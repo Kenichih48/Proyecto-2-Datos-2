@@ -7,6 +7,7 @@
 #include "List_BP.h"
 #include "Pathfinder.h"
 #include "GeneticAlgorithm.h"
+#include "BP_GUI.h"
 
 using namespace sf;
 using namespace std;
@@ -87,25 +88,11 @@ int main(){
                     maze.at(new_ball_y)->at(new_ball_x)->name = "2";
                     old_ball_x = new_ball_x;
                     old_ball_y = new_ball_y;
-                    maze.print();
-
-                    /*
-                    Pathfinder* finder = new Pathfinder;
-                    finder->setField(&maze);
-                    finder->setH();
-                    sol = finder->move();
-                    std::cout << "finding ended" << std::endl;*/
+                    string mazeString = maze.print();
+                    MatrixBP newMatrix = BPGui::generateMatrixFrom(mazeString);
                     Pathfinder finder; 
-                    finder.setField(&maze);
+                    finder.setField(&newMatrix);
                     finder.setH();
-                    for(int i = 0; i < finder.getField().getLength(); i++){
-                        ListBP* newList = finder.getField().at(i);
-                        for(int j = 0; j < newList->getLength(); j++){
-                            NodeBPG* newNode = newList->at(j);
-                            std::cout << newNode->getH() << " ";
-                        }
-                        std::cout << std::endl;
-                    }
                     sol = finder.move();
 
                     string solString;
@@ -117,7 +104,6 @@ int main(){
                     packetS.clear();
                     packetS << solString;
                     socket.send(packetS);
-                    //delete finder;
                 }
                 else{
                     //Backtracking 

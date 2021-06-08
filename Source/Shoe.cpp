@@ -6,7 +6,7 @@
  * @brief contructor de shoe, carga imagen del sprite 
  **/
 Shoe::Shoe(){
-    if(!shoeTexture.loadFromFile("/home/jose430/Documents/Proyecto-2-Datos-2/Img/SoccerFoot.png")){
+    if(!shoeTexture.loadFromFile("Img/SoccerFoot.png")){
         std::cout << "Image not loaded" << std::endl;
     }
     foot.setTexture(shoeTexture);

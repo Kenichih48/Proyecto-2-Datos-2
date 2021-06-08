@@ -25,7 +25,7 @@ BPGui::BPGui(){
     
     //Cargando Fondo
     sf::Texture field; 
-    if(!field.loadFromFile("/home/jose430/Documents/Proyecto-2-Datos-2/Img/field.png")){
+    if(!field.loadFromFile("Img/field.png")){
         std::cout << "Image not loaded" << std::endl;
     }
     sf::Sprite background; 
@@ -388,7 +388,7 @@ BPGui::BPGui(){
                         
                         if(!hasPathfinder){
                             std::cout << "Yes turn"<< std::endl;
-                            /*
+                            
                             //get pathfinding 
                             
                             packetS.clear();
@@ -425,7 +425,7 @@ BPGui::BPGui(){
                             hasPathfinder = true;
                         }
                         
-                        //showPathfinderFrom(buildPathfinderFrom(pathfindingString),&window);
+                        showPathfinderFrom(buildPathfinderFrom(pathfindingString),&window);
 
                         drawFromMatrix(&window,&matrix);
                         window.draw(ball);
@@ -758,7 +758,7 @@ void BPGui::applyForceBall(sf::RenderWindow* window, sf::Text* userScore, sf::Te
  * @brief funcion que carga imagenes de cada uno de los sprites
  * */
 void BPGui::setUpSprites(){
-    if(!players.loadFromFile("/home/jose430/Documents/Proyecto-2-Datos-2/Img/FootballPlayers.png")){
+    if(!players.loadFromFile("Img/FootballPlayers.png")){
         std::cout << "Image not loaded" << std::endl;
     }
     user.setTexture(players);
@@ -767,7 +767,7 @@ void BPGui::setUpSprites(){
     machine.setTextureRect(sf::IntRect(0,85,77,170));
 
      //Sprite Bola 
-    if(!ballTexture.loadFromFile("/home/jose430/Documents/Proyecto-2-Datos-2/Img/Ball.png")){
+    if(!ballTexture.loadFromFile("Img/Ball.png")){
         std::cout << "Image not loaded" << std::endl;
     }
     ball.setTexture(ballTexture);

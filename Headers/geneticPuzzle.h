@@ -1,7 +1,7 @@
 #ifndef GENETICPUZZLE_H_
 #define GENETICPUZZLE_H_
 
-
+#include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
 #include <iostream>
 #include "ListGP.h"
