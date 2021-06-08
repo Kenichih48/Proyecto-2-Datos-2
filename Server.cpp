@@ -6,6 +6,10 @@
 #include "Matrix_BP.h"
 #include "List_BP.h"
 #include "Pathfinder.h"
+#include "GeneticAlgorithm.h"
+
+using namespace sf;
+using namespace std;
 
 MatrixBP generateCleanMatrix();
 MatrixBP generatePlayingfield(int players);
@@ -23,6 +27,7 @@ int main(){
     listener.accept(socket);
     sf::Packet packetS, packetR;
 
+    int mode = - 1; 
     int numberGoalsInt;
     int numberPlayersInt;
     int turn;
@@ -36,71 +41,114 @@ int main(){
 
     MatrixBP maze = MatrixBP();
 
+     while(true){
+        packetR.clear();
+        socket.receive(packetR);
+        if(packetR.getData() != NULL){
+            packetR >> mode;
+            std::cout << mode << std::endl;
+            break;
+        }
+    }
+
     while (running){
-        if (first_run != true){
-            while(true){
+        if(mode == 0){
+            if (first_run != true){
+                while(true){
+                    packetR.clear();
+                    socket.receive(packetR);
+                    if(packetR.getData() != NULL){
+                        packetR >> numberPlayersInt >> numberGoalsInt;
+                        std::cout <<  numberPlayersInt << numberGoalsInt << std::endl;
+                        break;
+                    }
+                }
+                first_run = true;
+                maze = generatePlayingfield(numberPlayersInt);
+                string mazeString = maze.print();
+                std::cout << mazeString;
+                packetS << mazeString;
+                socket.send(packetS);
+            }
+            else{
+                while(true){
+                    packetR.clear();
+                    socket.receive(packetR);
+                    if(packetR.getData() != NULL){
+                        packetR >> turn >> new_ball_x >> new_ball_y;
+                        std::cout <<  turn << new_ball_x << new_ball_y << std::endl;
+                        break;
+                    }
+                }
+                if (turn == 1){
+                    //Pathfinding
+                    vector<vector<int>> sol;
+                    maze.at(old_ball_y)->at(old_ball_x)->name = "0";
+                    maze.at(new_ball_y)->at(new_ball_x)->name = "2";
+                    old_ball_x = new_ball_x;
+                    old_ball_y = new_ball_y;
+                    maze.print();
+                    Pathfinder* finder = new Pathfinder;
+                    finder->setField(&maze);
+                    finder->setH();
+                    sol = finder->move();
+                    std::cout << "finding ended" << std::endl;
+                    string solString;
+                    for(vector<int> elements : sol){
+                        solString += to_string(elements.at(0));
+                        solString += to_string(elements.at(1));
+                    }
+                    std::cout << solString;
+                    packetS.clear();
+                    packetS << solString;
+                    socket.send(packetS);
+                    delete finder;
+                }
+                else{
+                    //Backtracking 
+                    MatrixBP sol = MatrixBP();
+                    maze.at(old_ball_y)->at(old_ball_x)->name = "0";
+                    maze.at(new_ball_y)->at(new_ball_x)->name = "2";
+                    old_ball_x = new_ball_x;
+                    old_ball_y = new_ball_y;
+                    sol = generateCleanMatrix();
+                    sol = generateSolution(maze, sol, new_ball_y, new_ball_x);
+                    string solString = sol.print();
+                    std::cout << solString;
+                    packetS.clear();
+                    packetS << solString;
+                    socket.send(packetS);
+                }
+            }
+        } else if(mode == 1){
+            string image;
+            int numPieces = 0;
+            bool primo = false;
+
+            while (true)
+            {
+                packetR.clear();
                 socket.receive(packetR);
-                if(packetR.getData() != NULL){
-                    packetR >> numberPlayersInt >> numberGoalsInt;
-                    std::cout <<  numberPlayersInt << numberGoalsInt << std::endl;
+                if (packetR.getData() != NULL)
+                {
+                    packetR >> image >> numPieces >> primo;
+                    cout << image << " - " << numPieces << endl;
                     break;
                 }
             }
-            first_run = true;
-            maze = generatePlayingfield(numberPlayersInt);
-            string mazeString = maze.print();
-            std::cout << mazeString;
-            packetS << mazeString;
-            socket.send(packetS);
-        }
-        else{
+            GeneticAlgorithm solver(image, numPieces, primo);
+        } else {
             while(true){
                 packetR.clear();
                 socket.receive(packetR);
                 if(packetR.getData() != NULL){
-                    packetR >> turn >> new_ball_x >> new_ball_y;
-                    std::cout <<  turn << std::endl;
+                    packetR >> mode;
+                    std::cout << mode << std::endl;
                     break;
                 }
             }
-            if (turn == 1){
-                //Pathfinding
-                vector<vector<int>> sol;
-                maze.at(old_ball_x)->at(old_ball_y)->name = "0";
-                maze.at(new_ball_x)->at(new_ball_y)->name = "2";
-                old_ball_x = new_ball_x;
-                old_ball_y = new_ball_y;
-                Pathfinder finder = Pathfinder();
-                finder.setField(&maze);
-                finder.setH();
-                sol = finder.move();
-                std::cout << "finding ended" << std::endl;
-                string solString;
-                for(vector<int> elements : sol){
-                    solString += to_string(elements.at(0));
-                    solString += to_string(elements.at(1));
-                }
-                std::cout << solString;
-                packetS.clear();
-                packetS << solString;
-                socket.send(packetS);
-            }
-            else{
-                //Backtracking 
-                MatrixBP sol = MatrixBP();
-                maze.at(old_ball_x)->at(old_ball_y)->name = "0";
-                maze.at(new_ball_x)->at(new_ball_y)->name = "2";
-                old_ball_x = new_ball_x;
-                old_ball_y = new_ball_y;
-                sol = generateCleanMatrix();
-                sol = generateSolution(maze, sol, new_ball_y, new_ball_x);
-                string solString = sol.print();
-                std::cout << solString;
-                packetS.clear();
-                packetS << solString;
-                socket.send(packetS);
-            }
         }
+        
     }
     
 }

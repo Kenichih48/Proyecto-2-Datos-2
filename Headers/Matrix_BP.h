@@ -32,6 +32,11 @@ class MatrixNodeBPG{
         MatrixBP(){}
         int getLength(){return this->length;}
         bool isEmpty(){return this->length == 0;}
+
+        /**
+         * @brief agrega una lista al fondo de la matriz
+         * @param ListBP lista a agregar
+         **/
         void append(ListBP newlist){
             if(this->isEmpty()){
                 ListBP* newlistPtr = new ListBP;
@@ -51,6 +56,10 @@ class MatrixNodeBPG{
                 this->length++;
             }
         }
+
+        /**
+         * @brief imprime cada lista de la matriz
+         **/ 
         string print(){
             stringstream ss;
             if(!this->isEmpty()){
@@ -65,6 +74,13 @@ class MatrixNodeBPG{
             }
             return ss.str();
         }
+
+        /**
+         * @brief accede a la posicion indicada de la matriz 
+         * @param int index posicion a ser accesada
+         * @return ListBP* puntero a la posicion indicada 
+         * (retorn una excepción si no puede ser accesada)
+         **/ 
         ListBP* at(int index){
             int currentIndex = 0;
             if(index > this->length || index < 0){

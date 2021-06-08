@@ -1,5 +1,9 @@
 #include "Pathfinder.h"
 
+/**
+ * @brief guarda la mtriz como la matrix del Pathfinder y le da valores iniciales a otras variables
+ * @param MatrixBP* puntero a la matriz que se quiere trabajar
+ * */
 void Pathfinder::setField(MatrixBP* field){
     this->field = field;
     this->currentX = -1; 
@@ -12,6 +16,9 @@ void Pathfinder::setField(MatrixBP* field){
      return *this->field;
  }
 
+/**
+ * @brief recorre la matriz y a cada nodo le da un valor h con respecto a la posicion de la cancha
+ **/
 void Pathfinder::setH(){
     int goalX;
     int goalY;
@@ -34,6 +41,9 @@ void Pathfinder::setH(){
     }
 }
 
+/**
+ * @brief  Desde la posicion actual, le da valores de G y F a todos los nodos adyacentes y los coloca en la lista abierta
+ **/ 
 void Pathfinder::checkSurrounding(){ 
     //Se obtiene node del que se esta revisando los adyacentes
     ListBP* lastList = this->field->at(currentY); 
@@ -99,6 +109,11 @@ void Pathfinder::checkSurrounding(){
     }
 }
 
+/**
+ * @brief desde la posicion actual, llama a checkSurrounding, cambia la posicion  actual
+ * y coloca nodos en la lista cerrada hasta que se encuentra la cancha
+ * @return vector<vector<int>> vector con las coordenadas x,y de los nodos del camino encontrado
+ **/
 vector<vector<int>> Pathfinder::move(){
     
     //Si no existe matriz

@@ -7,7 +7,11 @@
 #include <time.h>
 #include "BP_GUI.h"
 #include "Shoe.h"
+#include "Pathfinder.h"
 
+/**
+*@brief Constructor de la clase, crea interfaz de BP Game
+**/
 BPGui::BPGui(){
 
     srand(time(NULL));
@@ -113,7 +117,10 @@ BPGui::BPGui(){
     bool menuBool = true;
     bool numberPlayersBool = false; 
     bool numberGoalsBool = false;
-    bool tryAgainBool = false; 
+    bool tryAgainBool = false;
+    bool won = false; 
+    int numberPlayersInt = 0;
+    int numberGoalsInt = 0;
 
     //Creado Sprites Juego 
     setUpSprites();
@@ -156,6 +163,8 @@ BPGui::BPGui(){
     ballPos.y = 3;
     bool hasPathfinder = false;
     string pathfindingString;
+    int old_ball_y = ballPos.y;
+    int old_ball_x = ballPos.x;  
     
 
     //Creando Zapato para tirar 
@@ -173,6 +182,10 @@ BPGui::BPGui(){
     machineScore.setPosition(750,530);
     userScore.setString(to_string(userGoals));
     machineScore.setString(to_string(machineGoals));
+
+    //Sending mode
+    packetS << 0;
+    socket.send(packetS);
 
 
     while (window.isOpen())
@@ -249,8 +262,6 @@ BPGui::BPGui(){
                     }
 
                     else if(readyButton.getGlobalBounds().contains(mousePos)){
-                        int numberPlayersInt = 0;
-                        int numberGoalsInt = 0;
                         std::string playerSTDString = numberPlayers.getString();
                         std::string goalsSTDString = numberGoals.getString();
                         try{
@@ -267,6 +278,7 @@ BPGui::BPGui(){
                             listener.listen(8080);
                             listener.accept(socket);
 
+                            packetS.clear();
                             packetS << numberPlayersInt << numberGoalsInt;
                             socket.send(packetS);
 
@@ -310,26 +322,44 @@ BPGui::BPGui(){
 
         //Dibujando fondo
         window.draw(background);
+        if((userGoals >= numberGoalsInt || machineGoals >= numberGoalsInt ) && numberGoalsInt != 0){
+            won = true;
+        }
 
         //Dibujando menu jugadores goles
-        if(menuBool){
-            window.draw(menu);
-            window.draw(numberPlayersRect);
-            window.draw(numberGoalsRect);
-            window.draw(numberPlayersButton);
-            window.draw(numberGoalsButton);
-            window.draw(playersButtonText);
-            window.draw(goalsButtonText);
-            window.draw(playersPrompt);
-            window.draw(numberPlayers);
-            window.draw(goalsPrompt);
-            window.draw(numberGoals);
-            window.draw(readyButton);
-            window.draw(ready);
-            if(tryAgainBool){
-                window.draw(tryAgain);
+        if(menuBool || won){
+            if(!won){
+                window.draw(menu);
+                window.draw(numberPlayersRect);
+                window.draw(numberGoalsRect);
+                window.draw(numberPlayersButton);
+                window.draw(numberGoalsButton);
+                window.draw(playersButtonText);
+                window.draw(goalsButtonText);
+                window.draw(playersPrompt);
+                window.draw(numberPlayers);
+                window.draw(goalsPrompt);
+                window.draw(numberGoals);
+                window.draw(readyButton);
+                window.draw(ready);
+                if(tryAgainBool){
+                    window.draw(tryAgain);
+                }
+            } else{
+                sf::Text endGame;
+                endGame.setFont(font);
+                endGame.setFillColor(sf::Color::Black);
+                endGame.setCharacterSize(100);
+                endGame.setPosition(150,150);
+                if(userGoals > machineGoals){
+                    endGame.setString("You won!");
+                } else{ 
+                    endGame.setString("You lost!");
+                }
+                window.draw(menu);
+                window.draw(endGame);
             }
-
+            
         } else { //Dibujando Juego 
             
             if (isTurn){
@@ -346,6 +376,7 @@ BPGui::BPGui(){
 
                 if(applyingForce){
                     hasPathfinder = false;
+                    pathfindingString = "";
                     window.draw(forceMenu);
                     window.draw(forceNumber);
                     window.draw(forcePrompt);
@@ -354,11 +385,12 @@ BPGui::BPGui(){
                     window.draw(forceNumberText);
                 } else {  
                     if(force < 1 && isTurn){
-                        /*
+                        
                         if(!hasPathfinder){
                             std::cout << "Yes turn"<< std::endl;
-
-                            //get pathfinding
+                            /*
+                            //get pathfinding 
+                            
                             packetS.clear();
                             packetS << 1 << ballPos.x << ballPos.y;
                             socket.send(packetS);
@@ -373,17 +405,33 @@ BPGui::BPGui(){
                                     break;
                                 }
                             }
+                            /*
+                            matrix.at(old_ball_y)->at(old_ball_x)->name = "0";
+                            matrix.at(ballPos.y)->at(ballPos.x)->name = "2";
+                            old_ball_x = ballPos.x;
+                            old_ball_y = ballPos.y;
 
+                            vector<vector<int>> sol;
+                            Pathfinder* finder = new Pathfinder;
+                            MatrixBP matrixCopy = matrix;
+                            finder->setField(&matrixCopy);
+                            finder->setH();
+                            sol = finder->move();
+                            for(vector<int> elements : sol){
+                                pathfindingString += to_string(elements.at(0));
+                                pathfindingString += to_string(elements.at(1));
+                            }
+                            std::cout <<pathfindingString << std::endl;*/
                             hasPathfinder = true;
                         }
-                    
-                        showPathfinderFrom(buildPathfinderFrom(pathfindingString),&window);
+                        
+                        //showPathfinderFrom(buildPathfinderFrom(pathfindingString),&window);
 
                         drawFromMatrix(&window,&matrix);
                         window.draw(ball);
                         window.draw(userScore);
                         window.draw(machineScore);
-                            */
+                        
                     }
                 }
             } else{ 
@@ -429,6 +477,11 @@ BPGui::BPGui(){
 
 }
 
+/**
+ * @brief Dibuja en la ventana los jugadores en la posiciones indicadas en la matriz
+ * @param window ventana en la que se dibujaran los jugadores
+ * @param matrix matriz indicando la posicion de los jugadores
+ * */
 void BPGui::drawFromMatrix(sf::RenderWindow* window, MatrixBP* matrix){
     int x = 0; 
     int y = 0;
@@ -454,6 +507,11 @@ void BPGui::drawFromMatrix(sf::RenderWindow* window, MatrixBP* matrix){
     }
 }
 
+/**
+ * @brief recibe un string y lo convierte en un vector de vectores de enteros
+ * @param pathfindingString string con las coordenadas proporcionadas por el pathfinder
+ * @return un vector<vector<int>> con las coordenadas indicadas en el string
+ * */
 vector<vector<int>> BPGui::buildPathfinderFrom(string pathfindingString){
     vector<vector<int>> path;
     for(int i = 0 ; i < pathfindingString.size()-1;i += 2){
@@ -467,6 +525,11 @@ vector<vector<int>> BPGui::buildPathfinderFrom(string pathfindingString){
     return path; 
 }
 
+/**
+ * @brief Dibuja una bola semitransparente en la ventana acorde con las coordenadas del vector
+ * @param ventana en la que se dibujan las bolas 
+ * @param vector<vector<int>> con las coordenadas de las posiciones de las bolas
+ **/
 void BPGui::showPathfinderFrom(vector<vector<int>> path,sf::RenderWindow* window){
     sf::Sprite newBall = ball;
     newBall.setColor(sf::Color(255,255,255,128));
@@ -478,6 +541,15 @@ void BPGui::showPathfinderFrom(vector<vector<int>> path,sf::RenderWindow* window
         window->draw(newBall);
     }
 }
+
+/**
+ * @brief Dibuja una bola semitransparente en las posiciones indicadas por la matriz, 
+ * y aplica fuerza a la bola de manera aleatoria en la direccion indicada por la matriz
+ * @param backtrakingMatrix matriz con la informacion de backtraking
+ * @param window ventana en la que se dibujaran las bolas
+ * @param userScore sf::Text en el que se enseñara cambios en goles
+ * @param machineScore sf::Text en el que se enseñara cambios en goles
+ * **/
 void BPGui::moveFrom(
     MatrixBP backtrackingMatrix,
     sf::RenderWindow* window,
@@ -505,29 +577,42 @@ void BPGui::moveFrom(
     sleep(2);
     //añadir casos para degreeAngle
     int newX = ballPos.x; 
-    int newY = ballPos.y; 
-    
-    try
-    {
+    int newY = ballPos.y;
+    bool found = false; 
+    if(newX-1 >= 0 && !found){
         if(backtrackingMatrix.at(newY)->at(newX-1)->name == "1"){
-        //Si me muevo a la izquierda
-        newX--; 
-        } else if(backtrackingMatrix.at(newY-1)->at(newX)->name == "1"){
+            //Si me muevo a la izquierda
+            newX--; 
+            found = true;
+        } 
+    }
+    if(newY-1 >= 0 && !found){
+        if(backtrackingMatrix.at(newY-1)->at(newX)->name == "1"){
             //Si me muevo hacia arriba
             newY--;
-        } else if(backtrackingMatrix.at(newY+1)->at(newX)->name == "1"){
+            found = true;
+        }
+        
+    } 
+
+    if(newY+1 < backtrackingMatrix.getLength() && !found){ 
+        if(backtrackingMatrix.at(newY+1)->at(newX)->name == "1"){
             //Si me muevo hacia abajo
             newY++;
-        } else if (backtrackingMatrix.at(newY)->at(newX+1)->name == "1"){
-            //Si me muevo a la derecha
-            newX++;
+            found = true;
         }
     }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
+    if(newX+1 < backtrackingMatrix.at(newY)->getLength() && !found){ 
+        if (backtrackingMatrix.at(newY)->at(newX+1)->name == "1"){
+            //Si me muevo a la derecha
+            newX++;
+            found = true;
+        }
     }
-
+    
+        
+        
+    
     if(ballPos.y > newY){     
         degreeWhenForce = 270;
     } else if(ballPos.y < newY){
@@ -543,6 +628,13 @@ void BPGui::moveFrom(
     }
 }
 
+/**
+ * @brief Tomando la posicion de la bola, mueve esta segun el angulo de golpe y la fuerza proporcionada,
+ * tambien cambia los valores de los textos que indican el numero de goles
+ * @param window ventana en la que se encuentra la bola  
+ * @param userScore sf::Text en el que se enseñara cambios en goles
+ * @param machineScore sf::Text en el que se enseñara cambios en goles
+ **/
 void BPGui::applyForceBall(sf::RenderWindow* window, sf::Text* userScore, sf::Text* machineScore){
     if(force >  0 && force <= 3){
         applyingForce = false;
@@ -662,6 +754,9 @@ void BPGui::applyForceBall(sf::RenderWindow* window, sf::Text* userScore, sf::Te
     }
 }
 
+/**
+ * @brief funcion que carga imagenes de cada uno de los sprites
+ * */
 void BPGui::setUpSprites(){
     if(!players.loadFromFile("/home/jose430/Documents/Proyecto-2-Datos-2/Img/FootballPlayers.png")){
         std::cout << "Image not loaded" << std::endl;
@@ -678,6 +773,11 @@ void BPGui::setUpSprites(){
     ball.setTexture(ballTexture);
 }
 
+/**
+ * @brief Genera una MatrixMP del string proporcionado por server
+ * @param string matrixstring un string con los elementos de una matriz 8x7
+ * @return MatrixBP de la forma 7x7
+ * */
 MatrixBP BPGui::generateMatrixFrom(string matrixString){
     MatrixBP matrix = MatrixBP();
 
@@ -698,6 +798,10 @@ MatrixBP BPGui::generateMatrixFrom(string matrixString){
     return matrix;
 }
 
+/**
+ * @brief funcion para obtener un numero aleatorio de 1 a 3
+ * @return numero aleatorio de 1 a 3
+ * */
 int BPGui::random_num(){
     int range = 3;
     int random_int = (rand() % range) + 1;

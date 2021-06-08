@@ -55,6 +55,10 @@ class ListBP{
             return;
         }
 
+        /**
+         * @brief Agrega un nodo al final de la lista
+         * @param newNode NodeBPG* puntero al nuevo nodo que se quiere agregar
+        **/
         void append(NodeBPG* newNode){     
             NodeBPG* last = head;
             newNode->next = NULL;
@@ -137,6 +141,12 @@ class ListBP{
             return -1;
         }
 
+        /**
+         * @brief retorna el nodo en la posicion
+         * @param int position posicion de la lista que se requiere 
+         * @return NodeBPG* puntero al nodo en la posicion dada 
+         * (devuelve un node "Empty" si la posicion no puede ser accesada)
+         * */
         NodeBPG* at(int position){
             NodeBPG* result = new NodeBPG();
             NodeBPG* current = this->head;

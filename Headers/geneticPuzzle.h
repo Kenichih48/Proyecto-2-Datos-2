@@ -24,6 +24,9 @@ int geneticPuzzle() //int argc, char const *argv[]
 
     socket.connect(ip, 8080);
 
+    packetS << 1;
+    socket.send(packetS);
+
     cout << "Genetic Puzzle\n" << endl;
     cout << "Please enter the name of the image file: " << endl;
     cin >> image;
@@ -43,7 +46,7 @@ int geneticPuzzle() //int argc, char const *argv[]
         }
         break;
     }
-
+    packetS.clear();
     packetS << image << numPieces << primo;
     socket.send(packetS);
 

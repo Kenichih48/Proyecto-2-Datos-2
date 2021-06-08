@@ -3,7 +3,9 @@
 #include "BP_GUI.h"
 #include "geneticPuzzle.h"
 
-
+/**
+ * @brief funcion main, crea menu para escoger entre BP Game y GP
+ * */
 int main(){
 
     sf::RenderWindow window(sf::VideoMode(600, 600), "Let's Play!");
@@ -58,6 +60,8 @@ int main(){
                 sf::Vector2f mousePos(mouseX,mouseY);
                 
                 if (buttonBP.getGlobalBounds().contains(mousePos)){
+                    //send mode 0
+
                     window.setActive(false);
                     window.setVisible(false);
                     BPGui* newGui = new BPGui();
@@ -66,6 +70,8 @@ int main(){
                 }
                 
                 else if (buttonGP.getGlobalBounds().contains(mousePos)){
+                    //send mode 1
+
                     std::cout << "Genetic Puzzle!" << std::endl;
                     window.setActive(false);
                     window.setVisible(false);
