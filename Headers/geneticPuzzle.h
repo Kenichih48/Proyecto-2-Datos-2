@@ -61,6 +61,9 @@ int geneticPuzzle() //int argc, char const *argv[]
 
     socket.connect(ip, 8080);
 
+    packetS << 1;
+    socket.send(packetS);
+
     RenderWindow window(VideoMode(420,627,32), "Genetic Puzzle");
     window.setVerticalSyncEnabled(true);
     font.loadFromFile("Ubuntu-M.ttf");
@@ -141,6 +144,7 @@ int geneticPuzzle() //int argc, char const *argv[]
         break;
     }
     numPieces = stoi(numPiecesStr);
+    packetS.clear();
     packetS << image << numPieces << primo;
     socket.send(packetS);
 
