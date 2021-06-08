@@ -19,6 +19,9 @@ MatrixBP generateSolution(MatrixBP maze, MatrixBP sol, int ball_x, int ball_y);
 bool generateSolution_aux(MatrixBP maze, int x, int y, MatrixBP sol);
 bool check_safety(MatrixBP maze, int x, int y);
 
+/**
+ * @brief main de server, se encarga de la logica de los algoritmos
+ * */
 int main(){
     
     sf::IpAddress ip = sf::IpAddress::getLocalAddress();
@@ -154,7 +157,11 @@ int main(){
     
 }
 
-//Función que genera las posiciones aleatorias iniciales de los jugadores
+/**
+ * @brief Función que genera las posiciones aleatorias iniciales de los jugadores
+ * @param int players numero de jugadores a crear
+ * @return MatrixBP matriz con los jugadores creados (nodos con nombre 1)
+ **/
 MatrixBP generatePlayingfield(int players){
     MatrixBP matrix = MatrixBP();
 
@@ -206,7 +213,9 @@ int random_num(){
     return random_int;
 }
 
-//función que genera una matriz con solamente 0's
+/**
+ * @brief función que genera una matriz con solamente 0's
+ **/
 MatrixBP generateCleanMatrix(){
     MatrixBP matrix = MatrixBP();
 
@@ -221,7 +230,13 @@ MatrixBP generateCleanMatrix(){
     return matrix;
 }
 
-//función que verifica si un cuadro es libre y parte de la matriz
+/**
+ * @brief función que verifica si un cuadro es libre y parte de la matriz
+ * @param MatrixBP maze matriz para verificacion
+ * @param int x posicion x a revisar
+ * @param int y posicion y a revisar
+ * @return bool si ek cuadro es libre y seguro
+ **/ 
 bool check_safety(MatrixBP maze, int x, int y)
 {
     if (x >= 0 && x < 7 && y >= 0 && y < 7 && maze.at(x)->at(y)->name != "1"){
@@ -230,7 +245,14 @@ bool check_safety(MatrixBP maze, int x, int y)
     return false;
 }
  
-//función que genera la ruta más corta entre la bola y el gol del jugador por backtracking
+/**
+ * @brief función que genera la ruta más corta entre la bola y el gol del jugador por backtracking
+ * @param MatrixBP maze matriz a revisar
+ * @param MatrixBP sol matriz donde se guarda la solucion
+ * @param int ball_x posicion x de la bola 
+ * @param int ball_y posicion y de la bola 
+ * @return MatrixBP matriz donde se indica ruta por medio de unos
+ **/
 MatrixBP generateSolution(MatrixBP maze, MatrixBP sol, int ball_x, int ball_y)
 {
     std::cout << ball_x << ball_y << std::endl;
@@ -241,7 +263,9 @@ MatrixBP generateSolution(MatrixBP maze, MatrixBP sol, int ball_x, int ball_y)
     return sol;
 }
  
-//función auxiliar de generate solution, es la parte recursiva del backtracking
+/**
+ * @brief función auxiliar de generate solution, es la parte recursiva del backtracking
+ **/
 bool generateSolution_aux(MatrixBP maze, int x, int y, MatrixBP sol)
 {
     // caso gol

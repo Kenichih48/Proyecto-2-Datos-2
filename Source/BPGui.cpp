@@ -405,23 +405,7 @@ BPGui::BPGui(){
                                     break;
                                 }
                             }
-                            /*
-                            matrix.at(old_ball_y)->at(old_ball_x)->name = "0";
-                            matrix.at(ballPos.y)->at(ballPos.x)->name = "2";
-                            old_ball_x = ballPos.x;
-                            old_ball_y = ballPos.y;
-
-                            vector<vector<int>> sol;
-                            Pathfinder* finder = new Pathfinder;
-                            MatrixBP matrixCopy = matrix;
-                            finder->setField(&matrixCopy);
-                            finder->setH();
-                            sol = finder->move();
-                            for(vector<int> elements : sol){
-                                pathfindingString += to_string(elements.at(0));
-                                pathfindingString += to_string(elements.at(1));
-                            }
-                            std::cout <<pathfindingString << std::endl;*/
+                            
                             hasPathfinder = true;
                         }
                         

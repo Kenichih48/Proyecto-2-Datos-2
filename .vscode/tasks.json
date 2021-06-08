@@ -7,11 +7,11 @@
             "command": "/usr/bin/g++",
             "args": [
                 "-g",
+                "-I",
+                "Img",
                 "Headers/*.h",
                 "-I",
                 "Headers",
-                "-I",
-                "Img",
                 "Source/*.cpp",
                 "-o",
                 "Main",
