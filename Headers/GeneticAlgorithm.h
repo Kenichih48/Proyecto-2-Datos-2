@@ -75,9 +75,9 @@ public:
         //Load the texture of the image
         puzzleTexture.loadFromFile(image);
         cout << "Starting to load new textures" << endl;
-        playTexture.loadFromFile("PlayButton.png");
-        rewindTexture.loadFromFile("RewindButton.png");
-        skipTexture.loadFromFile("SkipButton.png");
+        playTexture.loadFromFile("Img/PlayButton.png");
+        rewindTexture.loadFromFile("Img/RewindButton.png");
+        skipTexture.loadFromFile("Img/SkipButton.png");
         cout << "Loaded all textures succesfully" << endl;
 
         //Get its dimensions

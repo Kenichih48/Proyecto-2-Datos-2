@@ -54,7 +54,7 @@ int geneticPuzzle() //int argc, char const *argv[]
     ok.setSize(Vector2f(150,50));
     ok.setPosition(135,320);
 
-    backgroundTexture.loadFromFile("Background.png");
+    backgroundTexture.loadFromFile("Img/Background.png");
     background.setPosition(0,0);
     background.setTexture(&backgroundTexture);
     background.setSize(Vector2f(420, 627));
