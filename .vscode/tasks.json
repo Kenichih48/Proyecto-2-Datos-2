@@ -16,7 +16,8 @@
                 "-lsfml-graphics",
                 "-lsfml-window",
                 "-lsfml-system",
-                "-lsfml-network"
+                "-lsfml-network",
+                "-ltinyxml"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"

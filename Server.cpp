@@ -88,11 +88,26 @@ int main(){
                     old_ball_x = new_ball_x;
                     old_ball_y = new_ball_y;
                     maze.print();
+
+                    /*
                     Pathfinder* finder = new Pathfinder;
                     finder->setField(&maze);
                     finder->setH();
                     sol = finder->move();
-                    std::cout << "finding ended" << std::endl;
+                    std::cout << "finding ended" << std::endl;*/
+                    Pathfinder finder; 
+                    finder.setField(&maze);
+                    finder.setH();
+                    for(int i = 0; i < finder.getField().getLength(); i++){
+                        ListBP* newList = finder.getField().at(i);
+                        for(int j = 0; j < newList->getLength(); j++){
+                            NodeBPG* newNode = newList->at(j);
+                            std::cout << newNode->getH() << " ";
+                        }
+                        std::cout << std::endl;
+                    }
+                    sol = finder.move();
+
                     string solString;
                     for(vector<int> elements : sol){
                         solString += to_string(elements.at(0));
@@ -102,7 +117,7 @@ int main(){
                     packetS.clear();
                     packetS << solString;
                     socket.send(packetS);
-                    delete finder;
+                    //delete finder;
                 }
                 else{
                     //Backtracking 

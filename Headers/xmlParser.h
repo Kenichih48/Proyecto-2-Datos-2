@@ -3,6 +3,9 @@
 #include "tinyxml.h"
 #include <SFML/Graphics.hpp>
 
+
+using namespace std;
+
 /**
  * @file xmlParser.h
  * @version 1.0
