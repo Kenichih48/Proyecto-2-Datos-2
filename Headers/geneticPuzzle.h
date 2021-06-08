@@ -1,17 +1,26 @@
 #ifndef GENETICPUZZLE_H_
 #define GENETICPUZZLE_H_
 
-#include <SFML/Graphics.hpp>
+
 #include <SFML/Network.hpp>
 #include <iostream>
 #include "ListGP.h"
 #include "MatrixGP.h"
 
+/**
+ * @file geneticPuzzle.h
+ * @version 1.0
+ * @title geneticPuzzle
+ * @brief Manejo del lado del cliente en el Genetic Puzzle
+ */
 
 using namespace sf;
 using namespace std;
 
-///Main program
+/**
+ * @brief Main para el cliente del Genetic Puzzle
+ * @return
+ */
 int geneticPuzzle() //int argc, char const *argv[]
 {
     Packet packetS, packetR;
@@ -54,7 +63,7 @@ int geneticPuzzle() //int argc, char const *argv[]
     ok.setSize(Vector2f(150,50));
     ok.setPosition(135,320);
 
-    backgroundTexture.loadFromFile("Img/Background.png");
+    backgroundTexture.loadFromFile("Background.png");
     background.setPosition(0,0);
     background.setTexture(&backgroundTexture);
     background.setSize(Vector2f(420, 627));
