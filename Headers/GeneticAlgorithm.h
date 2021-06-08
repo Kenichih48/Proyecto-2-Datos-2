@@ -7,45 +7,69 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
 
+/**
+ * @file GeneticAlgorithm.h
+ * @version 1.0
+ * @title GeneticAlgoritm
+ * @brief Manejo de la logica del algoritmo genetico
+ */
 using namespace std;
 using namespace sf;
 
+/**
+ * @brief Clase GeneticAlgorithm que se encarga de manejar la logica del algoritmo genetico
+ */
 class GeneticAlgorithm{
 public:
+    /**
+     * @brief Constructor de la clase GeneticAlgorithm
+     * @param image es el nombre de la imagen del puzzle
+     * @param numPieces es la cantidad de piezas en el cual se quiere partir la imagen
+     * @param primo es un booleano que deja saber si la cantidad de piezas es primo o no
+     */
     GeneticAlgorithm(string image, int numPieces, bool primo){
         matrix = utility(numPieces, matrix);
         loadPosFitness(matrix);
         loadImages(image, matrix->getRows(), matrix->getCols());
         windowGeneticPuzzle(matrix, numPieces, primo);
     }
+
+    //Different vectors used for the display of the puzzle
     vector <vector<int>> puzzleMap;
     vector <int> tempMap;
     MatrixGP<int> *matrix;
 
+    //Texture of the puzzle and buttons
     Texture puzzleTexture;
     Texture playTexture, rewindTexture, skipTexture;
 
+    //Boolean to of running or stopping
     bool playing = false;
 
+    //Different rectangles for the buttons
     RectangleShape playButton, rewindButton, skipButton, buttonsBackground;
 
+    //Different lists used for the logic of the algorithm
     ListGP<Vector2f>* listPosImages = new ListGP<sf::Vector2f>();
     ListGP<Vector2f>* listPosFitness = new ListGP<sf::Vector2f>();
-    ListGP<MatrixNodeBP<int>*>* listFitness = new ListGP<MatrixNodeBP<int>*>();
+    ListGP<MatrixNodeGP<int>*>* listFitness = new ListGP<MatrixNodeGP<int>*>();
     ListGP<int>* listMutations = new ListGP<int>();
     ListGP<MatrixGP<int>*>* listGenerations = new ListGP<MatrixGP<int>*>();
 
+    //xml creator
     XmlParser xmlParser;
 
+    //Dimensions of the picture
     float dimensionX;
     float dimensionY;
 
 
-/// Function that loads the images
-/// \param image
-/// \param numPieces
-/// \param rows
-/// \param cols
+    /**
+     * @brief es la funcion encargada de cargar las imagenes y mantenerlas en variables
+     * @param image es el nombre de la imagen que va a ser el fondo
+     * @param rows es la cantidad de filas
+     * @param cols es la cantidad de columnas
+     */
     void loadImages(const string& image, int rows, int cols)
     {
         //Load the texture of the image
@@ -63,6 +87,7 @@ public:
         float col = dimensionX / cols;
         float row = dimensionY / rows;
 
+        //Add picture data to the list
         for(int i = 0; i < rows; i++)
         {
             for(int j = 0; j < cols; j++)
@@ -71,8 +96,11 @@ public:
             }
         }
     }
-/// Function that load the position fitness of the images
-/// \param matrix
+
+    /**
+     * @brief Es la funcion encargada de ingresar a la lista de fitness la matriz recibida
+     * @param matrix es la matriz de la piezas
+     */
     void loadPosFitness(MatrixGP<int>* matrix)
     {
         for(int i = 0; i < matrix->getRows(); i++)
@@ -84,13 +112,15 @@ public:
         }
     }
 
-/// Function that sorts the list of fitness
-/// \param list
-    void sortFitness(ListGP<MatrixNodeBP<int>*>* list)
+    /**
+     * @brief Es la funcion encargada de ordenar la lista de fitness
+     * @param list es la lista de nodos de una matriz
+     */
+    void sortFitness(ListGP<MatrixNodeGP<int>*>* list)
     {
-        MatrixNodeBP<int> *tempData;
-        NodeBP<MatrixNodeBP<int>*> *auxNode = list->getHead();
-        NodeBP<MatrixNodeBP<int>*> *temp = auxNode;
+        MatrixNodeGP<int> *tempData;
+        NodeGP<MatrixNodeGP<int>*> *auxNode = list->getHead();
+        NodeGP<MatrixNodeGP<int>*> *temp = auxNode;
 
         while(auxNode)
         {
@@ -110,8 +140,10 @@ public:
         }
     }
 
-/// Function that calculates the fitness of each individual
-/// \param matrix
+    /**
+     * @brief Es la funcion que calcula el fitness de cada individuo
+     * @param matrix es la matriz de las piezas
+     */
     void loadFitness(MatrixGP<int>* matrix)
     {
         int position;
@@ -122,7 +154,7 @@ public:
         {
             for(int j = 0; j < matrix->getCols(); j++)
             {
-                MatrixNodeBP<int>* node = matrix->getNodePos(i, j);
+                MatrixNodeGP<int>* node = matrix->getNodePos(i, j);
                 position = node->getData();
                 xEnd = listPosFitness->getDataPos(position).x;
                 yEnd = listPosFitness->getDataPos(position).y;
@@ -133,11 +165,13 @@ public:
         sortFitness(listFitness);
     }
 
-/// Function that changes the position of the selected individuals
-/// \param matrix
-/// \param list
-/// \return
-    MatrixGP<int>* crossover(MatrixGP<int>* matrix, ListGP<MatrixNodeBP<int>*>* list)
+    /**
+     * @brief Es la funcion encargada de hacer un crossover de individuos
+     * @param matrix es la matriz de las piezas
+     * @param list es la lista de nodos de una matriz
+     * @return retorna la matriz con el nuevo orden
+     */
+    MatrixGP<int>* crossover(MatrixGP<int>* matrix, ListGP<MatrixNodeGP<int>*>* list)
     {
         int position1 = matrix->getNodeData(matrix,list->getDataPos(0)->getData())->getData();
         int position2 = matrix->getNodeData(matrix,list->getDataPos(1)->getData())->getData();
@@ -150,9 +184,11 @@ public:
         return matrix;
     }
 
-/// Function that mutates an individual
-/// \param numPieces
-/// \param matrix
+    /**
+     * @brief Es la funcion encargada de mutar a los individuos
+     * @param numPieces es la cantidad de piezas que presenta el puzzle
+     * @param matrix es la matriz de las piezas
+     */
     void mutation(int numPieces, MatrixGP<int>* matrix)
     {
         int mutation;
@@ -187,8 +223,10 @@ public:
         }
     }
 
-/// Function that loads the image puzzle map
-/// \param matrix
+    /**
+     * @brief Es la funcion encargada de cargar las piezas de la imagen
+     * @param matrix es la matriz de las piezas
+     */
     void loadPuzzle(MatrixGP<int>* matrix)
     {
         //Clear the previous tempMap and map
@@ -200,7 +238,7 @@ public:
         {
             for(int j = 0; j < matrix->getCols(); j++)
             {
-                MatrixNodeBP<int>* node = matrix->getNodePos(i, j);
+                MatrixNodeGP<int>* node = matrix->getNodePos(i, j);
                 tempMap.push_back(node->getData());
             }
             puzzleMap.push_back(tempMap);
@@ -208,10 +246,12 @@ public:
         }
     }
 
-/// Function that loads the interface of the genetic puzzle
-/// \param matrix
-/// \param numPieces
-/// \param primo
+    /**
+     * @brief Es la funcion encargada de cargar la interfaz del genetic puzzle
+     * @param matrix es la matriz de las piezas
+     * @param numPieces es la cantidad de piezas
+     * @param primo es el booleano que indica si el numero de piezas es primo o no
+     */
     void windowGeneticPuzzle(MatrixGP<int>* matrix, int numPieces, bool primo)
     {
         //Create the window
@@ -240,6 +280,7 @@ public:
 
         loadFitness(listGenerations->getDataPos(generation));
 
+        //Generates all the generations and adds them to a list that will be later drawn
         while (!doingGens)
         {
             //Crossover
@@ -264,7 +305,7 @@ public:
 
             //Calculates the function fitness of the new generation
             listFitness->delAll();
-            listFitness = new ListGP<MatrixNodeBP<int>*>();
+            listFitness = new ListGP<MatrixNodeGP<int>*>();
             loadFitness(listGenerations->getDataPos(generation_));
 
             //Close the window if it gets to the solution or the limit of generation is achieved
@@ -314,15 +355,19 @@ public:
                 {
                     if (event.mouseButton.button == Mouse::Left)
                     {
+                        //Click in the play button to run
                         if (playButton.getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y)) && !playing)
                             playing = true;
+                        //Click in the play button to stop
                         else if (playButton.getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y)) && playing)
                             playing = false;
+                        //Click in the rewind button to go back
                         else if (rewindButton.getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y)) && generation > 0) {
                             generation--;
                             loadPuzzle(listGenerations->getDataPos(generation));
                             playing = false;
                         }
+                        //Click in the skip button to go forward
                         else if (skipButton.getGlobalBounds().contains(Vector2f(event.mouseButton.x, event.mouseButton.y)) && generation < generation_){
                             generation++;
                             loadPuzzle(listGenerations->getDataPos(generation));
@@ -366,6 +411,7 @@ public:
                     }
                 }
 
+                //Draws all the buttons
                 buttonsBackground.setFillColor(Color(60,60,60,255));
                 buttonsBackground.setSize(Vector2f(dimensionX, 150));
                 buttonsBackground.setPosition(0,dimensionY);
@@ -396,10 +442,6 @@ public:
                 window.display();
             }
         }
-    }
-    ListGP<MatrixGP<int>*>* getListGenerations()
-    {
-        return listGenerations;
     }
 };
 

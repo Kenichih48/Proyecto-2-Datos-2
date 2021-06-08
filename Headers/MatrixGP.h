@@ -3,10 +3,20 @@
 
 #include <iostream>
 
-#include "MatrixNodeBP.h"
+#include "MatrixNodeGP.h"
 
+/**
+ * @file MatrixGP.h
+ * @version 1.0
+ * @title MatrixGP
+ * @brief Manejo de la logica de las matrices del genetic puzzle
+ */
 using namespace std;
 
+/**
+ * @brief Es la clase de la matriz del genetic puzzle
+ * @tparam T
+ */
 template <class T>
 class MatrixGP
 {
@@ -14,40 +24,44 @@ public:
     MatrixGP(int, int);
     ~MatrixGP();
 
-    MatrixNodeBP<T>* getFirst();
+    MatrixNodeGP<T>* getFirst();
     int getRows();
     int getCols();
 
     void setRows(int);
     void setCols(int);
 
-    MatrixNodeBP<T>* getNodePos(int, int);
-    MatrixNodeBP<T>* getNodeData(MatrixGP<T>*, T);
+    MatrixNodeGP<T>* getNodePos(int, int);
+    MatrixNodeGP<T>* getNodeData(MatrixGP<T>*, T);
 
     void setNode(int, int, T);
 
     void printMatrix();
 
 private:
-    MatrixNodeBP<T> *first;
+    MatrixNodeGP<T> *first;
 
     int cols;
     int rows;
 };
 
-///Constructor per paramater
+/**
+ * @brief es el constructor por parametros
+ * @param rows_ es la cantidad de filas
+ * @param cols_ es la cantidad de columnas
+ */
 template <typename T>
 MatrixGP<T>::MatrixGP(int rows_, int cols_)
 {
     MatrixGP::rows = rows_;
     MatrixGP::cols = cols_;
 
-    MatrixNodeBP<T> *previousRow = nullptr;
+    MatrixNodeGP<T> *previousRow = nullptr;
 
     for(int i = 0; i < rows; ++i)
     {
-        MatrixNodeBP<T>* columnNode = new MatrixNodeBP<T>();
-        MatrixNodeBP<T>* current = columnNode;
+        MatrixNodeGP<T>* columnNode = new MatrixNodeGP<T>();
+        MatrixNodeGP<T>* current = columnNode;
 
         if(previousRow != nullptr)
         {
@@ -61,7 +75,7 @@ MatrixGP<T>::MatrixGP(int rows_, int cols_)
 
         for(int j = 1; j < cols_; ++j)
         {
-            MatrixNodeBP<T> * rowNode = new MatrixNodeBP<T>();
+            MatrixNodeGP<T> * rowNode = new MatrixNodeGP<T>();
             rowNode->setLeft(current);
             current->setRight(rowNode);
 
@@ -76,47 +90,71 @@ MatrixGP<T>::MatrixGP(int rows_, int cols_)
     }
 }
 
-///Gets the first node of the matrix
+/**
+ * @brief Es la funcion encargada de retornar el primer elemento de la matriz
+ * @tparam T
+ * @return retorna el primer elemento de la matriz
+ */
 template <typename T>
-MatrixNodeBP<T>* MatrixGP<T>::getFirst()
+MatrixNodeGP<T>* MatrixGP<T>::getFirst()
 {
     return MatrixGP::first;
 }
 
-///Gets the number of rows of the matrix
+/**
+ * @brief Es la funcion encargada de retornar la cantidad de filas que tiene la matriz
+ * @tparam T
+ * @return retorna la cantidad de filas de la matriz
+ */
 template <typename T>
 int MatrixGP<T>::getRows()
 {
     return MatrixGP::rows;
 }
 
-///Gets the number of columns of the matrix
+/**
+ * @brief Es la funcion encargada de retornar la cantidad de columnas que tiene la matriz
+ * @tparam T
+ * @return retorna la cantidad de columnas de la matriz
+ */
 template <typename T>
 int MatrixGP<T>::getCols()
 {
     return MatrixGP::cols;
 }
 
-///Sets the number of rows of a matrix
+/**
+ * @brief Es la funcion encargada de cambiar la cantidad de filas que tiene la matriz
+ * @tparam T
+ */
 template <typename T>
 void MatrixGP<T>::setRows(int rows_)
 {
     MatrixGP::rows = rows_;
 }
 
-///Sets the number of rows of a matrix
+/**
+ * @brief Es la funcion encargada de cambiar la cantidad de columnas que tiene la matriz
+ * @tparam T
+ */
 template <typename T>
 void MatrixGP<T>::setCols(int cols_)
 {
     MatrixGP::cols = cols_;
 }
 
-///Gets a node of the matrix by position
+/**
+ * @brief Es la funcion encargada de retornar el nodo por la posicion en la matriz
+ * @tparam T
+ * @param row es la posicion en fila
+ * @param column es la posicion en columna
+ * @return retorna el nodo de la matriz
+ */
 template <typename T>
-MatrixNodeBP<T>* MatrixGP<T>::getNodePos(int row, int column)
+MatrixNodeGP<T>* MatrixGP<T>::getNodePos(int row, int column)
 {
     if(row < rows && column < cols){
-        MatrixNodeBP<T>* node = first;
+        MatrixNodeGP<T>* node = first;
 
         for (int i = 0; i < row; ++i) {
             node = node->getDown();
@@ -131,28 +169,39 @@ MatrixNodeBP<T>* MatrixGP<T>::getNodePos(int row, int column)
     }
 }
 
-
-///Gets a node of the matrix by data
+/**
+ * @brief Es la funcion encargada de retornar el nodo por la informacion del nodo en la matriz
+ * @tparam T
+ * @param matrix es la matriz en la cual se busca
+ * @param data_ es la informacion del nodo que se busca
+ * @return retorna el nodo de la matriz
+ */
 template <typename T>
-MatrixNodeBP<T>* MatrixGP<T>::getNodeData(MatrixGP<T>* matrix, T data_)
+MatrixNodeGP<T>* MatrixGP<T>::getNodeData(MatrixGP<T>* matrix, T data_)
 {
     for(int i = 0; i < matrix->getRows(); i++)
     {
         for(int j = 0; j < matrix->getCols(); j++)
         {
-            MatrixNodeBP<int>* node = matrix->getNodePos(i, j);
+            MatrixNodeGP<int>* node = matrix->getNodePos(i, j);
             if(node->getData() == data_)
                 return node;
         }
     }
 }
 
-///Sets a node in the matrix
+/**
+ * @brief Es la funcion encargada de cambiar la informacion del nood
+ * @tparam T
+ * @param row es la fila de la matriz
+ * @param column es la columna de la matriz
+ * @param data_ es la nueva informacion del nodo
+ */
 template <typename T>
 void MatrixGP<T>::setNode(int row, int column, T data_)
 {
     if(column < cols && row < rows){
-        MatrixNodeBP<T> *node = first;
+        MatrixNodeGP<T> *node = first;
 
         for (int i = 0; i < row; ++i) {
             node = node->getDown();
@@ -166,15 +215,18 @@ void MatrixGP<T>::setNode(int row, int column, T data_)
     }
 }
 
-///Print the matrix
+/**
+ * @brief Es la funcion encargada de imprimir la matriz en consola
+ * @tparam T
+ */
 template <typename T>
 void MatrixGP<T>::printMatrix()
 {
-    MatrixNodeBP<T>* currentColumn = first;
+    MatrixNodeGP<T>* currentColumn = first;
 
     for(int i = 0; i < rows; i++) {
         currentColumn->print();
-        MatrixNodeBP<T>* currentRow = currentColumn->getRight();
+        MatrixNodeGP<T>* currentRow = currentColumn->getRight();
 
         for(int j = 0; j < cols - 1; ++j) {
             currentRow->print();
@@ -185,7 +237,10 @@ void MatrixGP<T>::printMatrix()
     }
 }
 
-///Deconstructor
+/**
+ * @brief Es el deconstructor
+ * @tparam T
+ */
 template<typename T>
 MatrixGP<T>::~MatrixGP() = default;
 
