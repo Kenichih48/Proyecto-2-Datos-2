@@ -3,10 +3,19 @@
 
 #include <iostream>
 #include "MatrixGP.h"
-#include "NodeBP.h"
+#include "NodeGP.h"
 
+/**
+ * @file ListGP.h
+ * @version 1.0
+ * @title ListGP
+ * @brief Manejo de las listas
+ */
 using namespace std;
 
+/**
+ * @brief Clase ListGP que se encarga de manejar las listas
+ */
 template <class T>
 class ListGP
 {
@@ -23,14 +32,17 @@ public:
 
     int getSize();
     T getDataPos(int);
-    NodeBP<T>* getHead();
+    NodeGP<T>* getHead();
 
 private:
     int numNodes;
-    NodeBP<T>* head = NULL;
+    NodeGP<T>* head = NULL;
 };
 
-///Default constructor
+/**
+ * @brief Es el constructor default
+ * @tparam T
+ */
 template <typename T>
 ListGP<T>::ListGP()
 {
@@ -38,14 +50,18 @@ ListGP<T>::ListGP()
     head = NULL;
 }
 
-///Add a node data at the end of the list
+/**
+ * @brief Es la funcion encargada de anadir un nodo a la lista
+ * @tparam T
+ * @param data_ es la informacion que quiere ser guardada en un nodo
+ */
 template <typename T>
 void ListGP<T>::addData(T data_)
 {
-    NodeBP<T> *newNode = new NodeBP<T>;
+    NodeGP<T> *newNode = new NodeGP<T>;
     newNode->data = data_;
     newNode->next = NULL;
-    NodeBP<T>* temp = head;
+    NodeGP<T>* temp = head;
     if (head == NULL)
     {
         newNode->prev = NULL;
@@ -61,14 +77,19 @@ void ListGP<T>::addData(T data_)
     numNodes++;
 }
 
+/**
+ * @brief Es la funcion encargada de anadir una generacion nueva a la lista
+ * @tparam T
+ * @param data_ es la informacion de la generacion por anadir a la lista
+ */
 template <typename T>
 void ListGP<T>::addGeneration(T data_)
 {
-    NodeBP<T>* newNode = new NodeBP<T>;
+    NodeGP<T>* newNode = new NodeGP<T>;
     newNode->data = data_;
     //newMatrix->printMatrix();
     newNode->next = NULL;
-    NodeBP<T>* temp = head;
+    NodeGP<T>* temp = head;
     if (head == NULL)
     {
         newNode->prev = NULL;
@@ -87,7 +108,10 @@ void ListGP<T>::addGeneration(T data_)
     numNodes++;
 }
 
-///Deletes all the nodes
+/**
+ * @brief Es la funcion encargada de eliminar todos los nodos de la lista
+ * @tparam T
+ */
 template <typename T>
 void ListGP<T>::delAll()
 {
@@ -95,12 +119,16 @@ void ListGP<T>::delAll()
     head = 0;
 }
 
-///Delete a node of the list by data
+/**
+ * @brief Es la funcion encargada de eliminar un nodo sabiendo la informacion contenida
+ * @tparam T
+ * @param data_ es la informacion del nodo por eliminar
+ */
 template <typename T>
 void ListGP<T>::delData(T data_)
 {
-    NodeBP<T> *temp = head;
-    NodeBP<T> *temp1 = head->next;
+    NodeGP<T> *temp = head;
+    NodeGP<T> *temp1 = head->next;
 
     if(head->data == data_)
     {
@@ -122,18 +150,27 @@ void ListGP<T>::delData(T data_)
     numNodes--;
 }
 
-///Gets the size of the list
+/**
+ * @brief Es la funcion encargada de retornar el tamano de la lista
+ * @tparam T
+ * @return retorna el tamano de la lista
+ */
 template <typename T>
 int ListGP<T>::getSize()
 {
     return numNodes;
 }
 
-///Get the data of the node by position
+/**
+ * @brief Es la funcion encargada de retornar la informacion contenida en un nodo sabiendo el indice
+ * @tparam T
+ * @param index es el indice del nodo
+ * @return retorna la informacion que contiene el nodo
+ */
 template <typename T>
 T ListGP<T>::getDataPos(int index)
 {
-    NodeBP<T> *temp = head;
+    NodeGP<T> *temp = head;
     int count = 0;
 
     while(temp != NULL)
@@ -147,17 +184,24 @@ T ListGP<T>::getDataPos(int index)
     }
 }
 
-///Gets the head of the list
+/**
+ * @brief Es la funcion encargada de retornar la cabeza de la lista
+ * @tparam T
+ * @return retorna la cabeza de la lista
+ */
 template <typename T>
-NodeBP<T>* ListGP<T>::getHead() {
+NodeGP<T>* ListGP<T>::getHead() {
     return ListGP::head;
 }
 
-///Prints the list node by node
+/**
+ * @brief Es la funcion encargada de imprimir la lista completa
+ * @tparam T
+ */
 template <typename T>
 void ListGP<T>::print()
 {
-    NodeBP<T> *temp = head;
+    NodeGP<T> *temp = head;
     if(!head){
         cout << "La lista esta vacia" << endl;
     } else {
@@ -168,7 +212,10 @@ void ListGP<T>::print()
     }
 }
 
-///Deconstructor
+/**
+ * @brief Es el deconstructor
+ * @tparam T
+ */
 template <typename T>
 ListGP<T>::~ListGP() = default;
 

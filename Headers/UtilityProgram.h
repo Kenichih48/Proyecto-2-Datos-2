@@ -6,9 +6,20 @@
 
 #include "MatrixGP.h"
 #include "ListGP.h"
-
+/**
+ * @file UtilityProgram.h
+ * @version 1.0
+ * @title Utility
+ * @brief Manejo de la logica de la particion de la imagen en una matriz y desordenarla en las piezas definidas
+ */
 using namespace std;
 
+/**
+ * @brief Es la funcion encargada de crear la matriz desordenada y con la cantidad de piezas definidas
+ * @param num es la cantida de piezas
+ * @param matrix es la matriz
+ * @return retorna la matriz desordenada
+ */
 MatrixGP<int>* utility(int num, MatrixGP<int> *matrix)
 {
     ListGP<int> *listInOrder = new ListGP<int>();
@@ -69,7 +80,7 @@ MatrixGP<int>* utility(int num, MatrixGP<int> *matrix)
     {
         for(int j = 0; j < matrix->getCols(); ++j)
         {
-            MatrixNodeBP<int>* node = matrix->getNodePos(i, j);
+            MatrixNodeGP<int>* node = matrix->getNodePos(i, j);
             node->setData(0);
         }
     }
@@ -81,7 +92,7 @@ MatrixGP<int>* utility(int num, MatrixGP<int> *matrix)
     {
         for(int i = 0; i < matrix->getRows(); i++){
             for(int j = 0; j < matrix->getCols(); j++){
-                MatrixNodeBP<int>* node = matrix->getNodePos(i, j);
+                MatrixNodeGP<int>* node = matrix->getNodePos(i, j);
                 node->setData(listNotOrder->getDataPos(x));
                 x++;
             }
